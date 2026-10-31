@@ -1,0 +1,1032 @@
+{
+  "attack_category_results": [
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9748892171344166,
+      "attacks_caught_by_review": 17,
+      "review_rate": 0.025110782865583457,
+      "rows": 677,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 583,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9968207385668868,
+      "attacks_caught_by_review": 12,
+      "review_rate": 0.00293470286133529,
+      "rows": 4089,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9869744879626302,
+      "attacks_caught_by_review": 121,
+      "review_rate": 0.010869565217391304,
+      "rows": 11132,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.7132959419333553,
+      "attacks_caught_by_review": 1491,
+      "review_rate": 0.24595842956120093,
+      "rows": 6062,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9996820518255525,
+      "attacks_caught_by_review": 6,
+      "review_rate": 0.00031794817444756504,
+      "rows": 18871,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9965675057208238,
+      "attacks_caught_by_review": 11,
+      "review_rate": 0.003146453089244851,
+      "rows": 3496,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9735449735449735,
+      "attacks_caught_by_review": 9,
+      "review_rate": 0.023809523809523808,
+      "rows": 378,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "clean"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9911373707533235,
+      "attacks_caught_by_review": 6,
+      "review_rate": 0.008862629246676515,
+      "rows": 677,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 0.9982847341337907,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.0017152658662092624,
+      "rows": 583,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.991440449987772,
+      "attacks_caught_by_review": 31,
+      "review_rate": 0.007581315725116165,
+      "rows": 4089,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9907473948975926,
+      "attacks_caught_by_review": 88,
+      "review_rate": 0.007905138339920948,
+      "rows": 11132,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.781095348069944,
+      "attacks_caught_by_review": 1132,
+      "review_rate": 0.18673705047838998,
+      "rows": 6062,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9462137671559536,
+      "attacks_caught_by_review": 1015,
+      "review_rate": 0.05378623284404642,
+      "rows": 18871,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9957093821510298,
+      "attacks_caught_by_review": 14,
+      "review_rate": 0.004004576659038902,
+      "rows": 3496,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9867724867724867,
+      "attacks_caught_by_review": 4,
+      "review_rate": 0.010582010582010581,
+      "rows": 378,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9852289512555391,
+      "attacks_caught_by_review": 10,
+      "review_rate": 0.014771048744460856,
+      "rows": 677,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 583,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9965761799951088,
+      "attacks_caught_by_review": 13,
+      "review_rate": 0.0031792614331132307,
+      "rows": 4089,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.990298239310097,
+      "attacks_caught_by_review": 99,
+      "review_rate": 0.008893280632411068,
+      "rows": 11132,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.7471131639722863,
+      "attacks_caught_by_review": 1345,
+      "review_rate": 0.22187396898713296,
+      "rows": 6062,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9997350431879604,
+      "attacks_caught_by_review": 5,
+      "review_rate": 0.0002649568120396375,
+      "rows": 18871,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9948512585812357,
+      "attacks_caught_by_review": 17,
+      "review_rate": 0.004862700228832952,
+      "rows": 3496,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9761904761904762,
+      "attacks_caught_by_review": 8,
+      "review_rate": 0.021164021164021163,
+      "rows": 378,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9852289512555391,
+      "attacks_caught_by_review": 10,
+      "review_rate": 0.014771048744460856,
+      "rows": 677,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 0.9982847341337907,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.0017152658662092624,
+      "rows": 583,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9987772071411103,
+      "attacks_caught_by_review": 5,
+      "review_rate": 0.001222792858889704,
+      "rows": 4089,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9935321595400647,
+      "attacks_caught_by_review": 72,
+      "review_rate": 0.0064678404599353215,
+      "rows": 11132,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.7850544374793798,
+      "attacks_caught_by_review": 1288,
+      "review_rate": 0.21247113163972287,
+      "rows": 6062,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9996820518255525,
+      "attacks_caught_by_review": 6,
+      "review_rate": 0.00031794817444756504,
+      "rows": 18871,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.98941647597254,
+      "attacks_caught_by_review": 36,
+      "review_rate": 0.010297482837528604,
+      "rows": 3496,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9814814814814815,
+      "attacks_caught_by_review": 7,
+      "review_rate": 0.018518518518518517,
+      "rows": 378,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 44,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9896602658788775,
+      "attacks_caught_by_review": 6,
+      "review_rate": 0.008862629246676515,
+      "rows": 677,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 583,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9946197114208853,
+      "attacks_caught_by_review": 21,
+      "review_rate": 0.005135730007336757,
+      "rows": 4089,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9894897592526051,
+      "attacks_caught_by_review": 115,
+      "review_rate": 0.010330578512396695,
+      "rows": 11132,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.7066974595842956,
+      "attacks_caught_by_review": 1618,
+      "review_rate": 0.2669086110194655,
+      "rows": 6062,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9993641036511048,
+      "attacks_caught_by_review": 12,
+      "review_rate": 0.0006358963488951301,
+      "rows": 18871,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9888443935926774,
+      "attacks_caught_by_review": 38,
+      "review_rate": 0.010869565217391304,
+      "rows": 3496,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9788359788359788,
+      "attacks_caught_by_review": 8,
+      "review_rate": 0.021164021164021163,
+      "rows": 378,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "timing"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.96602658788774,
+      "attacks_caught_by_review": 23,
+      "review_rate": 0.033973412112259974,
+      "rows": 677,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 583,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9951088285644412,
+      "attacks_caught_by_review": 17,
+      "review_rate": 0.004157495720224994,
+      "rows": 4089,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9831117499101689,
+      "attacks_caught_by_review": 120,
+      "review_rate": 0.010779734099892203,
+      "rows": 11132,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.7104915869350049,
+      "attacks_caught_by_review": 959,
+      "review_rate": 0.1581986143187067,
+      "rows": 6062,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9996290604631445,
+      "attacks_caught_by_review": 5,
+      "review_rate": 0.0002649568120396375,
+      "rows": 18871,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9959954233409611,
+      "attacks_caught_by_review": 11,
+      "review_rate": 0.003146453089244851,
+      "rows": 3496,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9735449735449735,
+      "attacks_caught_by_review": 5,
+      "review_rate": 0.013227513227513227,
+      "rows": 378,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9852289512555391,
+      "attacks_caught_by_review": 10,
+      "review_rate": 0.014771048744460856,
+      "rows": 677,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 583,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.99168500855955,
+      "attacks_caught_by_review": 33,
+      "review_rate": 0.008070432868672046,
+      "rows": 4089,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9842795544376572,
+      "attacks_caught_by_review": 174,
+      "review_rate": 0.015630614444843694,
+      "rows": 11132,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.8000659848234906,
+      "attacks_caught_by_review": 1140,
+      "review_rate": 0.1880567469482019,
+      "rows": 6062,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9994170950135128,
+      "attacks_caught_by_review": 11,
+      "review_rate": 0.0005829049864872026,
+      "rows": 18871,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.994279176201373,
+      "attacks_caught_by_review": 20,
+      "review_rate": 0.005720823798627002,
+      "rows": 3496,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9867724867724867,
+      "attacks_caught_by_review": 5,
+      "review_rate": 0.013227513227513227,
+      "rows": 378,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "tcp"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9231905465288035,
+      "attacks_caught_by_review": 52,
+      "review_rate": 0.07680945347119646,
+      "rows": 677,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 0.9897084048027445,
+      "attacks_caught_by_review": 5,
+      "review_rate": 0.008576329331046312,
+      "rows": 583,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9567131327953045,
+      "attacks_caught_by_review": 144,
+      "review_rate": 0.03521643433602348,
+      "rows": 4089,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9414301113905857,
+      "attacks_caught_by_review": 517,
+      "review_rate": 0.046442687747035576,
+      "rows": 11132,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.6974595842956121,
+      "attacks_caught_by_review": 1396,
+      "review_rate": 0.2302870339821841,
+      "rows": 6062,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9968735096179323,
+      "attacks_caught_by_review": 52,
+      "review_rate": 0.0027555508452122303,
+      "rows": 18871,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9719679633867276,
+      "attacks_caught_by_review": 93,
+      "review_rate": 0.02660183066361556,
+      "rows": 3496,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.7592592592592593,
+      "attacks_caught_by_review": 74,
+      "review_rate": 0.19576719576719576,
+      "rows": 378,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9318181818181818,
+      "attacks_caught_by_review": 3,
+      "review_rate": 0.06818181818181818,
+      "rows": 44,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.9748892171344166,
+      "attacks_caught_by_review": 17,
+      "review_rate": 0.025110782865583457,
+      "rows": 677,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 583,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9951088285644412,
+      "attacks_caught_by_review": 19,
+      "review_rate": 0.0046466128637808754,
+      "rows": 4089,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9838303988501617,
+      "attacks_caught_by_review": 158,
+      "review_rate": 0.014193316564858068,
+      "rows": 11132,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.7149455625206202,
+      "attacks_caught_by_review": 1481,
+      "review_rate": 0.244308808973936,
+      "rows": 6062,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9996820518255525,
+      "attacks_caught_by_review": 6,
+      "review_rate": 0.00031794817444756504,
+      "rows": 18871,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9962814645308925,
+      "attacks_caught_by_review": 12,
+      "review_rate": 0.003432494279176201,
+      "rows": 3496,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9735449735449735,
+      "attacks_caught_by_review": 9,
+      "review_rate": 0.023809523809523808,
+      "rows": 378,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "application"
+    },
+    {
+      "attack_category": "Analysis",
+      "attack_recall_all_rows": 0.983751846381093,
+      "attacks_caught_by_review": 11,
+      "review_rate": 0.01624815361890694,
+      "rows": 677,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "Backdoor",
+      "attack_recall_all_rows": 1.0,
+      "attacks_caught_by_review": 0,
+      "review_rate": 0.0,
+      "rows": 583,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "DoS",
+      "attack_recall_all_rows": 0.9975544142822206,
+      "attacks_caught_by_review": 9,
+      "review_rate": 0.0022010271460014674,
+      "rows": 4089,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "Exploits",
+      "attack_recall_all_rows": 0.9910168882500898,
+      "attacks_caught_by_review": 90,
+      "review_rate": 0.008084800574919152,
+      "rows": 11132,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "Fuzzers",
+      "attack_recall_all_rows": 0.7858792477730122,
+      "attacks_caught_by_review": 1160,
+      "review_rate": 0.19135598812273177,
+      "rows": 6062,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "Generic",
+      "attack_recall_all_rows": 0.9998940172751841,
+      "attacks_caught_by_review": 2,
+      "review_rate": 0.00010598272481585502,
+      "rows": 18871,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "Reconnaissance",
+      "attack_recall_all_rows": 0.9977116704805492,
+      "attacks_caught_by_review": 8,
+      "review_rate": 0.002288329519450801,
+      "rows": 3496,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "Shellcode",
+      "attack_recall_all_rows": 0.9814814814814815,
+      "attacks_caught_by_review": 7,
+      "review_rate": 0.018518518518518517,
+      "rows": 378,
+      "scenario": "packet_loss"
+    },
+    {
+      "attack_category": "Worms",
+      "attack_recall_all_rows": 0.9772727272727273,
+      "attacks_caught_by_review": 1,
+      "review_rate": 0.022727272727272728,
+      "rows": 44,
+      "scenario": "packet_loss"
+    }
+  ],
+  "dataset": "UNSW-NB15",
+  "feature_outage_scenarios": {
+    "application": [
+      "trans_depth",
+      "response_body_len",
+      "is_ftp_login",
+      "ct_ftp_cmd",
+      "ct_flw_http_mthd",
+      "is_sm_ips_ports"
+    ],
+    "byte_volume": [
+      "sbytes",
+      "dbytes",
+      "sload",
+      "dload",
+      "smean",
+      "dmean"
+    ],
+    "connection_counts": [
+      "ct_srv_src",
+      "ct_dst_ltm",
+      "ct_src_dport_ltm",
+      "ct_dst_sport_ltm",
+      "ct_dst_src_ltm",
+      "ct_src_ltm",
+      "ct_srv_dst"
+    ],
+    "packet_counts": [
+      "spkts",
+      "dpkts"
+    ],
+    "packet_loss": [
+      "sloss",
+      "dloss"
+    ],
+    "protocol_context": [
+      "proto",
+      "service",
+      "state"
+    ],
+    "tcp": [
+      "swin",
+      "stcpb",
+      "dtcpb",
+      "dwin",
+      "tcprtt",
+      "synack",
+      "ackdat"
+    ],
+    "timing": [
+      "dur",
+      "rate",
+      "sinpkt",
+      "dinpkt",
+      "sjit",
+      "djit"
+    ],
+    "ttl_state": [
+      "sttl",
+      "dttl",
+      "ct_state_ttl"
+    ]
+  },
+  "generated_at": "2026-10-31T11:36:07.067640+00:00",
+  "protocol": {
+    "attack_cat_used_as_model_input": false,
+    "decision_threshold": 0.55,
+    "official_test_rows": 82332,
+    "random_state": 42,
+    "review_budget_target": 0.1,
+    "review_count_rule": "floor(review_budget * batch_rows)",
+    "review_policy": "within each evaluation batch, route the requested fraction of records closest to the decision threshold for review",
+    "test_labels_used_to_select_review_rows": false,
+    "training_rows": 175341
+  },
+  "scenarios": [
+    {
+      "attack_recall_all_rows": 0.9571605047207271,
+      "attacks_sent_to_review": 1668,
+      "automatic_accuracy": 0.9209975843128787,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8814312782393238,
+      "baseline_error_capture_rate": 0.4003278016799836,
+      "baseline_errors": 9762,
+      "baseline_errors_sent_to_review": 3908,
+      "false_alarms_auto": 5580,
+      "outage_features": [],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.1416666666666666,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "clean"
+    },
+    {
+      "attack_recall_all_rows": 0.9446748433777464,
+      "attacks_sent_to_review": 2292,
+      "automatic_accuracy": 0.8979068543435134,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8592406354758781,
+      "baseline_error_capture_rate": 0.3472258175856416,
+      "baseline_errors": 11589,
+      "baseline_errors_sent_to_review": 4024,
+      "false_alarms_auto": 7349,
+      "outage_features": [
+        "proto",
+        "service",
+        "state"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.09999999999999998,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "protocol_context"
+    },
+    {
+      "attack_recall_all_rows": 0.962543015971058,
+      "attacks_sent_to_review": 1498,
+      "automatic_accuracy": 0.9135076046910214,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8744716513627752,
+      "baseline_error_capture_rate": 0.379874213836478,
+      "baseline_errors": 10335,
+      "baseline_errors_sent_to_review": 3926,
+      "false_alarms_auto": 6209,
+      "outage_features": [
+        "spkts",
+        "dpkts"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.09999999999999998,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "packet_counts"
+    },
+    {
+      "attack_recall_all_rows": 0.9682123003617753,
+      "attacks_sent_to_review": 1425,
+      "automatic_accuracy": 0.8819147356914399,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8314264198610504,
+      "baseline_error_capture_rate": 0.3695511203977232,
+      "baseline_errors": 13879,
+      "baseline_errors_sent_to_review": 5129,
+      "false_alarms_auto": 8734,
+      "outage_features": [
+        "sbytes",
+        "dbytes",
+        "sload",
+        "dload",
+        "smean",
+        "dmean"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.10833333333333339,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "byte_volume"
+    },
+    {
+      "attack_recall_all_rows": 0.9562340068825553,
+      "attacks_sent_to_review": 1819,
+      "automatic_accuracy": 0.8868675690630103,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8381431278239324,
+      "baseline_error_capture_rate": 0.3709290109560258,
+      "baseline_errors": 13326,
+      "baseline_errors_sent_to_review": 4943,
+      "false_alarms_auto": 8218,
+      "outage_features": [
+        "dur",
+        "rate",
+        "sinpkt",
+        "dinpkt",
+        "sjit",
+        "djit"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.06666666666666665,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "timing"
+    },
+    {
+      "attack_recall_all_rows": 0.955483984823083,
+      "attacks_sent_to_review": 1141,
+      "automatic_accuracy": 0.907218720900417,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8870669970363892,
+      "baseline_error_capture_rate": 0.2605936760593676,
+      "baseline_errors": 9298,
+      "baseline_errors_sent_to_review": 2423,
+      "false_alarms_auto": 5998,
+      "outage_features": [
+        "sttl",
+        "dttl",
+        "ct_state_ttl"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.050000000000000044,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "ttl_state"
+    },
+    {
+      "attack_recall_all_rows": 0.967616694608665,
+      "attacks_sent_to_review": 1394,
+      "automatic_accuracy": 0.8618739794059299,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8003449448574066,
+      "baseline_error_capture_rate": 0.3773573427424261,
+      "baseline_errors": 16438,
+      "baseline_errors_sent_to_review": 6203,
+      "false_alarms_auto": 10161,
+      "outage_features": [
+        "swin",
+        "stcpb",
+        "dtcpb",
+        "dwin",
+        "tcprtt",
+        "synack",
+        "ackdat"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.16666666666666663,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "tcp"
+    },
+    {
+      "attack_recall_all_rows": 0.9344392482131827,
+      "attacks_sent_to_review": 2336,
+      "automatic_accuracy": 0.9184469426038138,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8796336782781907,
+      "baseline_error_capture_rate": 0.39021190716448034,
+      "baseline_errors": 9910,
+      "baseline_errors_sent_to_review": 3867,
+      "false_alarms_auto": 5407,
+      "outage_features": [
+        "ct_srv_src",
+        "ct_dst_ltm",
+        "ct_src_dport_ltm",
+        "ct_dst_sport_ltm",
+        "ct_dst_src_ltm",
+        "ct_src_ltm",
+        "ct_srv_dst"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.10833333333333339,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "connection_counts"
+    },
+    {
+      "attack_recall_all_rows": 0.9564325421335922,
+      "attacks_sent_to_review": 1703,
+      "automatic_accuracy": 0.9232243350112687,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8837997376475732,
+      "baseline_error_capture_rate": 0.4053517299048814,
+      "baseline_errors": 9567,
+      "baseline_errors_sent_to_review": 3878,
+      "false_alarms_auto": 5417,
+      "outage_features": [
+        "trans_depth",
+        "response_body_len",
+        "is_ftp_login",
+        "ct_ftp_cmd",
+        "ct_flw_http_mthd",
+        "is_sm_ips_ports"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.13333333333333336,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "application"
+    },
+    {
+      "attack_recall_all_rows": 0.968300538251125,
+      "attacks_sent_to_review": 1288,
+      "automatic_accuracy": 0.9069758026424108,
+      "automatic_coverage": 0.9000024291891366,
+      "baseline_accuracy": 0.8638560948355439,
+      "baseline_error_capture_rate": 0.38504772950307786,
+      "baseline_errors": 11209,
+      "baseline_errors_sent_to_review": 4316,
+      "false_alarms_auto": 6744,
+      "outage_features": [
+        "sloss",
+        "dloss"
+      ],
+      "review_budget_target": 0.1,
+      "review_rate": 0.09999757081086333,
+      "review_uncertainty_cutoff_in_batch": 0.11666666666666659,
+      "reviewed_rows": 8233,
+      "rows": 82332,
+      "scenario": "packet_loss"
+    }
+  ]
+}

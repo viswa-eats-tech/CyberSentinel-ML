@@ -6,9 +6,10 @@ from pathlib import Path
 from typing import Any
 
 import joblib
+import numpy as np
 import pandas as pd
 
-from app.schemas import PredictionRequest
+from app.schemas import BatchPredictionRequest, PredictionRequest
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MODEL_PATH = PROJECT_ROOT / "models" / "model.pkl"
@@ -121,6 +122,81 @@ class ModelService:
             "attack_probability": attack_probability,
             "threshold": self.threshold,
             "model_name": self.metadata.get("primary_model_display_name", "unknown"),
+        }
+
+    def predict_batch(self, payload: BatchPredictionRequest) -> dict[str, Any]:
+        if self.model is None:
+            raise ModelNotLoadedError(
+                "Model is not loaded. Train or restore the model artifact first."
+            )
+
+        records = [record.model_dump() for record in payload.records]
+        for features in records:
+            missing_features = [
+                column for column in self.feature_columns if column not in features
+            ]
+            if missing_features:
+                raise PredictionFailureError(
+                    "Model metadata is not aligned with the prediction request schema."
+                )
+
+        rows = pd.DataFrame(
+            [
+                {column: features[column] for column in self.feature_columns}
+                for features in records
+            ]
+        )
+        try:
+            probabilities = self.model.predict_proba(rows)[:, 1]
+        except Exception as exc:
+            raise PredictionFailureError(
+                "Batch prediction failed during model inference."
+            ) from exc
+
+        uncertainty = np.abs(probabilities - self.threshold)
+        review_count = int(np.floor(payload.review_budget * len(records)))
+        reviewed = np.zeros(len(records), dtype=bool)
+        if review_count:
+            review_indices = np.lexsort(
+                (np.arange(len(uncertainty)), uncertainty)
+            )[:review_count]
+            reviewed[review_indices] = True
+
+        model_name = self.metadata.get("primary_model_display_name", "unknown")
+        items = []
+        for index, probability in enumerate(probabilities):
+            missing_features = [
+                column
+                for column in self.feature_columns
+                if records[index].get(column) is None
+            ]
+            prediction = int(probability >= self.threshold)
+            prediction_label = "attack" if prediction == 1 else "normal"
+            is_review = bool(reviewed[index])
+            items.append(
+                {
+                    "prediction": prediction,
+                    "prediction_label": prediction_label,
+                    "attack_probability": float(probability),
+                    "threshold": self.threshold,
+                    "model_name": model_name,
+                    "decision": "review" if is_review else prediction_label,
+                    "review_reason": (
+                        "This record is among the least certain in the submitted batch."
+                        if is_review
+                        else None
+                    ),
+                    "uncertainty_margin": float(uncertainty[index]),
+                    "missing_features": missing_features,
+                }
+            )
+
+        return {
+            "review_budget": payload.review_budget,
+            "review_count": review_count,
+            "review_rate": review_count / len(records),
+            "threshold": self.threshold,
+            "items": items,
         }
 
     def health(self) -> dict[str, Any]:

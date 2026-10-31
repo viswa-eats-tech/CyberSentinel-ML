@@ -53,6 +53,9 @@ def project_root() -> Path:
 
 
 def render_dashboard(results: dict[str, Any]) -> str:
+    if "scenarios" in results:
+        return render_robustness_dashboard(results)
+
     model_cards = "\n".join(
         render_model_card(model_name, metrics)
         for model_name, metrics in results["models"].items()
@@ -390,6 +393,79 @@ def render_dashboard(results: dict[str, Any]) -> str:
 </body>
 </html>
 """
+
+
+def render_robustness_dashboard(results: dict[str, Any]) -> str:
+    scenario_rows = "\n".join(
+        "<tr>"
+        f"<td>{html.escape(str(row['scenario']))}</td>"
+        f"<td>{format_percent(row['review_rate'])}</td>"
+        f"<td>{format_percent(row['automatic_coverage'])}</td>"
+        f"<td>{format_percent(row['baseline_accuracy'])}</td>"
+        f"<td>{format_percent(row['automatic_accuracy'])}</td>"
+        f"<td>{format_percent(row['baseline_error_capture_rate'])}</td>"
+        f"<td>{format_percent(row['attack_recall_all_rows'])}</td>"
+        "</tr>"
+        for row in results.get("scenarios", [])
+    )
+    category_rows = "\n".join(
+        "<tr>"
+        f"<td>{html.escape(str(row['scenario']))}</td>"
+        f"<td>{html.escape(str(row['attack_category']))}</td>"
+        f"<td>{int(row['rows'])}</td>"
+        f"<td>{format_percent(row['review_rate'])}</td>"
+        f"<td>{format_percent(row['attack_recall_all_rows'])}</td>"
+        f"<td>{int(row['attacks_caught_by_review'])}</td>"
+        "</tr>"
+        for row in results.get("attack_category_results", [])
+    )
+    generated_at = html.escape(str(results.get("generated_at", "unknown")))
+    protocol = results.get("protocol", {})
+    budget = format_percent(protocol.get("review_budget_target", 0))
+    test_rows = int(protocol.get("official_test_rows", 0))
+    category_section = (
+        f"""<section><h2>Attack category results</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>Scenario</th><th>Category</th><th>Rows</th><th>Review rate</th>
+<th>Attack recall</th><th>Attacks reviewed</th>
+</tr></thead><tbody>{category_rows}</tbody></table></div></section>"""
+        if category_rows
+        else ""
+    )
+    return f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feature outage and alert triage experiment</title>
+<style>
+body {{ margin: 0; background: #f3f5f8; color: #172033;
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }}
+main {{ max-width: 1200px; margin: 32px auto; padding: 0 20px; }}
+section {{ background: white; border: 1px solid #d8dee8; border-radius: 10px;
+  margin: 18px 0; padding: 18px; }}
+h1 {{ margin-bottom: 4px; }} .muted {{ color: #647084; }}
+.table-wrap {{ overflow-x: auto; }}
+table {{ width: 100%; border-collapse: collapse; white-space: nowrap; }}
+th, td {{ text-align: left; border-bottom: 1px solid #e5e9ef; padding: 10px; }}
+th {{ background: #f8fafc; }}
+</style></head><body><main>
+<h1>Feature outage and alert triage</h1>
+<p class="muted">Generated {generated_at}. Target review budget: {budget}. 
+Official test rows: {test_rows}. Outage scenarios are simulated by replacing
+all values in a feature group with missing values.</p>
+<section><h2>Scenario summary</h2><div class="table-wrap"><table>
+<thead><tr><th>Scenario</th><th>Review rate</th><th>Automatic coverage</th>
+<th>Baseline accuracy</th><th>Automatic accuracy</th>
+<th>Baseline errors caught</th><th>Attack recall</th></tr></thead>
+<tbody>{scenario_rows}</tbody></table></div></section>
+{category_section}
+</main></body></html>"""
+
+
+def format_percent(value: Any) -> str:
+    try:
+        return f"{float(value):.1%}"
+    except (TypeError, ValueError):
+        return "n/a"
 
 
 def render_threshold_selection(results: dict[str, Any]) -> str:

@@ -122,6 +122,135 @@ class PredictionResponse(BaseModel):
     model_name: str
 
 
+class BatchPredictionRecord(BaseModel):
+    """A flow record that can contain missing values for batch triage."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    dur: float | None = Field(default=None, ge=0)
+    proto: str | None = None
+    service: str | None = None
+    state: str | None = None
+    spkts: int | None = Field(default=None, ge=0)
+    dpkts: int | None = Field(default=None, ge=0)
+    sbytes: int | None = Field(default=None, ge=0)
+    dbytes: int | None = Field(default=None, ge=0)
+    rate: float | None = Field(default=None, ge=0)
+    sttl: int | None = Field(default=None, ge=0)
+    dttl: int | None = Field(default=None, ge=0)
+    sload: float | None = Field(default=None, ge=0)
+    dload: float | None = Field(default=None, ge=0)
+    sloss: int | None = Field(default=None, ge=0)
+    dloss: int | None = Field(default=None, ge=0)
+    sinpkt: float | None = Field(default=None, ge=0)
+    dinpkt: float | None = Field(default=None, ge=0)
+    sjit: float | None = Field(default=None, ge=0)
+    djit: float | None = Field(default=None, ge=0)
+    swin: int | None = Field(default=None, ge=0)
+    stcpb: int | None = Field(default=None, ge=0)
+    dtcpb: int | None = Field(default=None, ge=0)
+    dwin: int | None = Field(default=None, ge=0)
+    tcprtt: float | None = Field(default=None, ge=0)
+    synack: float | None = Field(default=None, ge=0)
+    ackdat: float | None = Field(default=None, ge=0)
+    smean: int | None = Field(default=None, ge=0)
+    dmean: int | None = Field(default=None, ge=0)
+    trans_depth: int | None = Field(default=None, ge=0)
+    response_body_len: int | None = Field(default=None, ge=0)
+    ct_srv_src: int | None = Field(default=None, ge=0)
+    ct_state_ttl: int | None = Field(default=None, ge=0)
+    ct_dst_ltm: int | None = Field(default=None, ge=0)
+    ct_src_dport_ltm: int | None = Field(default=None, ge=0)
+    ct_dst_sport_ltm: int | None = Field(default=None, ge=0)
+    ct_dst_src_ltm: int | None = Field(default=None, ge=0)
+    is_ftp_login: int | None = Field(default=None, ge=0)
+    ct_ftp_cmd: int | None = Field(default=None, ge=0)
+    ct_flw_http_mthd: int | None = Field(default=None, ge=0)
+    ct_src_ltm: int | None = Field(default=None, ge=0)
+    ct_srv_dst: int | None = Field(default=None, ge=0)
+    is_sm_ips_ports: int | None = Field(default=None, ge=0)
+
+
+class BatchPredictionRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        json_schema_extra={
+            "example": {
+                "review_budget": 0.1,
+                "records": [
+                    {
+                        "dur": 0.000011,
+                        "proto": "udp",
+                        "service": "-",
+                        "state": "INT",
+                        "spkts": 2,
+                        "dpkts": 0,
+                        "sbytes": 496,
+                        "dbytes": 0,
+                        "rate": 90909.0902,
+                        "sttl": 254,
+                        "dttl": 0,
+                        "sload": 180363632.0,
+                        "dload": 0.0,
+                        "sloss": 0,
+                        "dloss": 0,
+                        "sinpkt": 0.011,
+                        "dinpkt": 0.0,
+                        "sjit": 0.0,
+                        "djit": 0.0,
+                        "swin": 0,
+                        "stcpb": 0,
+                        "dtcpb": 0,
+                        "dwin": 0,
+                        "tcprtt": 0.0,
+                        "synack": 0.0,
+                        "ackdat": 0.0,
+                        "smean": 248,
+                        "dmean": 0,
+                        "trans_depth": 0,
+                        "response_body_len": 0,
+                        "ct_srv_src": 2,
+                        "ct_state_ttl": 2,
+                        "ct_dst_ltm": 1,
+                        "ct_src_dport_ltm": 1,
+                        "ct_dst_sport_ltm": 1,
+                        "ct_dst_src_ltm": 2,
+                        "is_ftp_login": 0,
+                        "ct_ftp_cmd": 0,
+                        "ct_flw_http_mthd": 0,
+                        "ct_src_ltm": 1,
+                        "ct_srv_dst": 2,
+                        "is_sm_ips_ports": 0,
+                    }
+                ],
+            }
+        },
+    )
+
+    records: list[BatchPredictionRecord] = Field(..., min_length=1, max_length=5000)
+    review_budget: float = Field(..., gt=0, lt=1)
+
+
+class TriagePredictionResponse(BaseModel):
+    prediction: int
+    prediction_label: str
+    attack_probability: float
+    threshold: float
+    model_name: str
+    decision: str
+    review_reason: str | None = None
+    uncertainty_margin: float
+    missing_features: list[str]
+
+
+class BatchPredictionResponse(BaseModel):
+    review_budget: float
+    review_count: int
+    review_rate: float
+    threshold: float
+    items: list[TriagePredictionResponse]
+
+
 class HealthResponse(BaseModel):
     model_config = ConfigDict(
         json_schema_extra={

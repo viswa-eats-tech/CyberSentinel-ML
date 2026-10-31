@@ -1,6 +1,6 @@
 # Training Results
 
-Generated at: `2026-06-17T07:49:02.589247+00:00`
+Generated at: `2026-10-31T11:25:56.570722+00:00`
 
 ## Dataset
 
@@ -18,33 +18,33 @@ Generated at: `2026-06-17T07:49:02.589247+00:00`
 | Metric | Value |
 | --- | ---: |
 | Threshold | 0.5500 |
-| Accuracy | 0.8500 |
-| Precision attack | 0.8315 |
-| Recall attack | 0.9124 |
-| F1 attack | 0.8701 |
-| ROC-AUC | 0.9559 |
+| Accuracy | 0.8499 |
+| Precision attack | 0.8317 |
+| Recall attack | 0.9120 |
+| F1 attack | 0.8700 |
+| ROC-AUC | 0.9560 |
 
 | Confusion Matrix | Value |
 | --- | ---: |
-| True negative | 28620 |
-| False positive | 8380 |
-| False negative | 3972 |
-| True positive | 41360 |
+| True negative | 28632 |
+| False positive | 8368 |
+| False negative | 3988 |
+| True positive | 41344 |
 
 ## Random Forest
 
 | Metric | Value |
 | --- | ---: |
 | Threshold | 0.5500 |
-| Accuracy | 0.8818 |
-| Precision attack | 0.8329 |
+| Accuracy | 0.8814 |
+| Precision attack | 0.8324 |
 | Recall attack | 0.9824 |
-| F1 attack | 0.9015 |
-| ROC-AUC | 0.9796 |
+| F1 attack | 0.9012 |
+| ROC-AUC | 0.9800 |
 
 | Confusion Matrix | Value |
 | --- | ---: |
-| True negative | 28066 |
-| False positive | 8934 |
-| False negative | 796 |
-| True positive | 44536 |
+| True negative | 28035 |
+| False positive | 8965 |
+| False negative | 797 |
+| True positive | 44535 |

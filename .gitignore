@@ -16,6 +16,7 @@ htmlcov/
 # Local datasets and generated model binaries are too large for normal git commits.
 data/raw/
 data/processed/
+data/Training and Testing Sets/
 models/*.pkl
 !models/metadata.json
 

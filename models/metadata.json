@@ -10,23 +10,23 @@
     "id",
     "attack_cat"
   ],
-  "generated_at": "2026-06-17T07:49:02.589247+00:00",
+  "generated_at": "2026-10-31T11:25:56.570722+00:00",
   "library_versions": {
-    "pandas": "2.3.3",
-    "scikit_learn": "1.9.0"
+    "pandas": "2.2.2",
+    "scikit_learn": "1.5.0"
   },
   "metrics": {
-    "accuracy": 0.8818199485011903,
+    "accuracy": 0.8814312782393238,
     "confusion_matrix": {
-      "false_negative": 796,
-      "false_positive": 8934,
-      "true_negative": 28066,
-      "true_positive": 44536
+      "false_negative": 797,
+      "false_positive": 8965,
+      "true_negative": 28035,
+      "true_positive": 44535
     },
-    "f1_attack": 0.9015202121414546,
-    "precision_attack": 0.8329156536375538,
-    "recall_attack": 0.9824406600194123,
-    "roc_auc": 0.9796426916968147
+    "f1_attack": 0.9012263234579894,
+    "precision_attack": 0.8324299065420561,
+    "recall_attack": 0.9824186005470749,
+    "roc_auc": 0.9799755247173405
   },
   "model_thresholds": {
     "logistic_regression": 0.55,

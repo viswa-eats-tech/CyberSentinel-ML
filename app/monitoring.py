@@ -318,7 +318,7 @@ def monitoring_dashboard_response(model_health: dict[str, Any]) -> HTMLResponse:
     <section class="status-strip">
       <div class="callout">
         <strong>Service path</strong>
-        <div class="muted"><span class="mono">POST /predict</span> records requests, errors and latency. <span class="mono">GET /metrics</span> remains Prometheus-compatible.</div>
+        <div class="muted"><span class="mono">POST /predict</span> scores one flow. <span class="mono">POST /predict/batch</span> scores a batch and routes its least certain records for review. <span class="mono">GET /metrics</span> remains Prometheus-compatible.</div>
       </div>
       <div class="callout">
         <strong>Model state</strong>

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -10,8 +11,19 @@ def build_preprocessor(
     categorical_features: list[str],
     scale_numeric: bool = False,
 ) -> ColumnTransformer:
-    numeric_transformer = StandardScaler() if scale_numeric else "passthrough"
-    categorical_transformer = OneHotEncoder(handle_unknown="ignore", sparse_output=True)
+    numeric_steps = [("imputer", SimpleImputer(strategy="median"))]
+    if scale_numeric:
+        numeric_steps.append(("scaler", StandardScaler()))
+    numeric_transformer = Pipeline(steps=numeric_steps)
+    categorical_transformer = Pipeline(
+        steps=[
+            ("imputer", SimpleImputer(strategy="most_frequent")),
+            (
+                "encoder",
+                OneHotEncoder(handle_unknown="ignore", sparse_output=True),
+            ),
+        ]
+    )
 
     return ColumnTransformer(
         transformers=[

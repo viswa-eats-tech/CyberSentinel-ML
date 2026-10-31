@@ -24,6 +24,10 @@ def default_dataset_dir() -> Path:
     if env_path:
         return Path(env_path).expanduser().resolve()
 
+    project_data_dir = project_root() / "data" / "Training and Testing Sets"
+    if project_data_dir.is_dir():
+        return project_data_dir
+
     return (
         workspace_root()
         / "UNSW-NB15 dataset"

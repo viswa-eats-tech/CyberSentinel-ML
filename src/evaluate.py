@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
 import pandas as pd
 from sklearn.metrics import (
     accuracy_score,
@@ -98,3 +99,103 @@ def _format_metric(value: float | None) -> str:
     if value is None:
         return "n/a"
     return f"{value:.4f}"
+
+
+def select_review_rows(
+    probabilities: np.ndarray,
+    decision_threshold: float,
+    review_budget: float,
+) -> tuple[np.ndarray, float | None]:
+    if not 0 < review_budget < 1:
+        raise ValueError("review_budget must be greater than 0 and less than 1.")
+    uncertainty = np.abs(probabilities - decision_threshold)
+    review_count = int(np.floor(review_budget * len(probabilities)))
+    reviewed = np.zeros(len(probabilities), dtype=bool)
+    if review_count == 0:
+        return reviewed, None
+
+    # Stable row order breaks ties reproducibly while keeping the budget exact.
+    review_indices = np.lexsort((np.arange(len(uncertainty)), uncertainty))[:review_count]
+    reviewed[review_indices] = True
+    return reviewed, float(uncertainty[review_indices[-1]])
+
+
+def evaluate_triage(
+    labels: np.ndarray,
+    probabilities: np.ndarray,
+    threshold: float,
+    reviewed: np.ndarray,
+) -> dict[str, float | int]:
+    baseline_predictions = (probabilities >= threshold).astype(int)
+    automatic = ~reviewed
+    baseline_errors = baseline_predictions != labels
+    error_count = int(baseline_errors.sum())
+    reviewed_error_count = int((baseline_errors & reviewed).sum())
+    automatic_count = int(automatic.sum())
+
+    if automatic_count:
+        automatic_accuracy = float(
+            (baseline_predictions[automatic] == labels[automatic]).mean()
+        )
+    else:
+        automatic_accuracy = 0.0
+
+    total_attacks = int((labels == 1).sum())
+    auto_detected_attacks = int(
+        ((labels == 1) & (baseline_predictions == 1) & automatic).sum()
+    )
+    return {
+        "rows": int(len(labels)),
+        "reviewed_rows": int(reviewed.sum()),
+        "review_rate": float(reviewed.mean()),
+        "automatic_coverage": float(automatic.mean()),
+        "automatic_accuracy": automatic_accuracy,
+        "baseline_accuracy": float((baseline_predictions == labels).mean()),
+        "baseline_errors": error_count,
+        "baseline_errors_sent_to_review": reviewed_error_count,
+        "baseline_error_capture_rate": (
+            reviewed_error_count / error_count if error_count else 0.0
+        ),
+        "attack_recall_all_rows": (
+            auto_detected_attacks / total_attacks if total_attacks else 0.0
+        ),
+        "attacks_sent_to_review": int(((labels == 1) & reviewed).sum()),
+        "false_alarms_auto": int(
+            ((labels == 0) & (baseline_predictions == 1) & automatic).sum()
+        ),
+    }
+
+
+def evaluate_attack_categories(
+    categories: pd.Series,
+    labels: np.ndarray,
+    probabilities: np.ndarray,
+    reviewed: np.ndarray,
+    threshold: float,
+    scenario: str,
+) -> list[dict[str, Any]]:
+    predictions = (probabilities >= threshold).astype(int)
+    rows = []
+    category_values = categories.fillna("Unknown").astype(str).to_numpy()
+    for category in sorted(set(category_values)):
+        if category.lower() == "normal":
+            continue
+        mask = category_values == category
+        count = int(mask.sum())
+        if not count:
+            continue
+        rows.append(
+            {
+                "scenario": scenario,
+                "attack_category": category,
+                "rows": count,
+                "review_rate": float(reviewed[mask].mean()),
+                "attack_recall_all_rows": float(
+                    ((predictions[mask] == 1) & ~reviewed[mask]).mean()
+                ),
+                "attacks_caught_by_review": int(
+                    ((labels[mask] == 1) & reviewed[mask]).sum()
+                ),
+            }
+        )
+    return rows

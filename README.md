@@ -85,11 +85,14 @@ UNSW_NB15_training-set.csv
 UNSW_NB15_testing-set.csv
 ```
 
-By default, the code looks for the dataset in:
+By default, the code first checks this project-local folder:
 
 ```text
-../UNSW-NB15 dataset/CSV Files/Training and Testing Sets/
+data/Training and Testing Sets/
 ```
+
+If it is not present, the code checks the sibling folder
+`../UNSW-NB15 dataset/CSV Files/Training and Testing Sets/`.
 
 If your dataset is stored elsewhere, set:
 
@@ -262,6 +265,34 @@ Generate the Random Forest analysis:
 python -m src.analyze_random_forest
 ```
 
+### Feature outage and review-budget experiment
+
+The robustness experiment evaluates the Random Forest when one group of flow
+features is unavailable. It compares the ordinary threshold decision with a
+triage policy that routes low-confidence records for review. The review cutoff
+selects the requested fraction of most uncertain records within each evaluation
+batch. The official test set is used for final evaluation; its labels do not
+affect which records are routed for review.
+
+```bash
+python -m src.robustness_experiment --review-budget 0.10 --decision-threshold 0.55
+```
+
+This writes `reports/feature_robustness_results.json`, a scenario summary CSV,
+and per-attack-category results. `attack_cat` is used only to break down test
+results; it is excluded from model inputs. The simulated outages replace all
+values in a named feature group with missing values. This is a controlled
+stress test, not evidence of performance on live network traffic. The batch
+ranking policy assumes a review queue with a fixed capacity for each batch.
+
+Generate the experiment dashboard:
+
+```bash
+python -m src.visualize_results \
+  --results-json reports/feature_robustness_results.json \
+  --output-html reports/feature_robustness_dashboard.html
+```
+
 Quick smoke training on a stratified sample:
 
 ```bash
@@ -297,6 +328,7 @@ Available endpoints:
 | `/health` | GET | Service and model status |
 | `/metadata` | GET | Dataset, model and training metadata exposed by the service |
 | `/predict` | POST | Binary prediction for one network-flow record |
+| `/predict/batch` | POST | Batch predictions with a fixed review budget for the least-certain records |
 | `/metrics` | GET | Prometheus-compatible raw metrics |
 | `/monitoring` | GET | Human-readable monitoring dashboard |
 | `/monitoring/snapshot` | GET | Monitoring state as JSON |
@@ -336,6 +368,30 @@ Example response:
   "model_name": "Random Forest"
 }
 ```
+
+Batch prediction accepts `records` (1–5,000 flow records) and a `review_budget`
+between 0 and 1. For example, `review_budget: 0.10` routes the 10% of records
+closest to the model decision threshold for human review. The budget is applied
+per submitted batch; the number reviewed is `floor(review_budget * batch_size)`.
+Each item still includes the binary model prediction, along with a `decision`
+that can be `attack`, `normal`, or `review`. The batch endpoint also accepts
+omitted or `null` feature values; the preprocessing pipeline imputes them and
+the response lists each record's `missing_features`. The single-record
+`/predict` endpoint continues to require every feature. Submit batches large
+enough for your chosen budget to select at least one record.
+
+```text
+POST /predict/batch
+{
+  "review_budget": 0.1,
+  "records": [
+    <flow record matching the /predict request schema>,
+    <another flow record matching the /predict request schema>
+  ]
+}
+```
+
+The Swagger UI at `/docs` includes the complete request schema.
 
 Example unavailable-model response:
 
