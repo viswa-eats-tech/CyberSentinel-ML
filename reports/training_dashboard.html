@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Netshield Training Results</title>
+  <style>
+    :root {
+      --bg: #f3f5f8;
+      --surface: #ffffff;
+      --surface-soft: #f8fafc;
+      --text: #172033;
+      --muted: #647084;
+      --border: #d8dee8;
+      --border-strong: #b8c2d2;
+      --green: #16845b;
+      --blue: #2b65c8;
+      --red: #c83d3d;
+      --amber: #b86b00;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+      line-height: 1.45;
+    }
+
+    main {
+      width: min(1240px, calc(100vw - 40px));
+      margin: 26px auto 48px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 5px;
+      font-size: 28px;
+      font-weight: 750;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .muted { color: var(--muted); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--surface);
+      color: var(--muted);
+      padding: 7px 10px;
+      font-size: 13px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--green);
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      background: var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .metric-box {
+      background: var(--surface);
+      padding: 14px 16px;
+      min-height: 86px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .metric-box span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .metric-box strong {
+      display: block;
+      font-size: 23px;
+      font-weight: 760;
+      margin-top: 4px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: 142px 1fr 58px;
+      gap: 10px;
+      align-items: center;
+      margin: 9px 0;
+      font-size: 14px;
+    }
+
+    .bar {
+      height: 8px;
+      background: #e6eaf0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .fill {
+      height: 100%;
+      background: var(--blue);
+      border-radius: 999px;
+    }
+
+    .fill.good { background: var(--green); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 9px 8px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .matrix-cell {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 11px 12px;
+      background: var(--surface-soft);
+    }
+
+    .matrix-cell strong {
+      display: block;
+      font-size: 21px;
+      margin-bottom: 2px;
+    }
+
+    .model-note {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      background: #f7fbf8;
+      border: 1px solid #c7dfd2;
+      border-radius: 8px;
+      padding: 13px 15px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    .threshold-note {
+      background: #f8fbff;
+      border-color: #c9d9f4;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      background: var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .detail-item {
+      background: var(--surface-soft);
+      padding: 12px 13px;
+    }
+
+    .detail-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      margin-bottom: 4px;
+    }
+
+    .detail-item strong {
+      display: block;
+      font-size: 18px;
+      font-weight: 740;
+    }
+
+    .positive { color: var(--green); }
+    .negative { color: var(--red); }
+    .warning { color: var(--amber); }
+
+    @media (max-width: 860px) {
+      main { width: min(100vw - 24px, 720px); }
+      header { grid-template-columns: 1fr; align-items: start; }
+      .summary, .grid { grid-template-columns: 1fr; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .metric-row { grid-template-columns: 130px 1fr 52px; }
+      .model-note { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>Model Evaluation Report</h1>
+        <div class="muted">UNSW-NB15 binary intrusion detection - generated <span class="mono">2026-06-17T07:49:02.589247+00:00</span></div>
+      </div>
+      <div class="badge"><span class="dot"></span> Primary model: Random Forest</div>
+    </header>
+
+    <section class="summary">
+      <div class="metric-box"><span>Training rows</span><strong>175,341</strong></div>
+      <div class="metric-box"><span>Testing rows</span><strong>82,332</strong></div>
+      <div class="metric-box"><span>Input features</span><strong>42</strong></div>
+      <div class="metric-box"><span>RF threshold</span><strong>0.5500</strong></div>
+      <div class="metric-box"><span>Attack recall</span><strong>0.9824</strong></div>
+      <div class="metric-box"><span>F1 attack</span><strong>0.9015</strong></div>
+    </section>
+
+    <section class="model-note">
+      <div><strong>Feature set:</strong> 39 numeric fields plus categorical protocol context (<span class="mono">proto, service, state</span>).</div>
+      <div class="muted">Excluded from training: <span class="mono">id</span>, <span class="mono">attack_cat</span></div>
+    </section>
+
+    <section class="panel threshold-note" style="margin-bottom: 18px;">
+      <h2>Random Forest operating threshold</h2>
+      <div class="muted">The API uses a fixed Random Forest threshold configured during training. At this operating point, the model keeps attack recall high while reducing false positives compared with a more aggressive high-recall threshold.</div>
+      <div class="detail-grid">
+        <div class="detail-item"><span>Mode</span><strong>fixed threshold</strong></div>
+        <div class="detail-item"><span>Threshold</span><strong>0.5500</strong></div>
+        <div class="detail-item"><span>Test recall</span><strong>0.9824</strong></div>
+        <div class="detail-item"><span>Test F1</span><strong>0.9015</strong></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-bottom: 18px;">
+      <h2>Model comparison on held-out test split</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Logistic Regression</th>
+            <th>Random Forest</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Decision threshold</td><td>0.5500</td><td>0.5500</td></tr>
+<tr><td>Accuracy</td><td>0.8500</td><td>0.8818</td></tr>
+<tr><td>Precision attack</td><td>0.8315</td><td>0.8329</td></tr>
+<tr><td>Recall attack</td><td>0.9124</td><td>0.9824</td></tr>
+<tr><td>F1 attack</td><td>0.8701</td><td>0.9015</td></tr>
+<tr><td>ROC-AUC</td><td>0.9559</td><td>0.9796</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+  <h3>Logistic Regression</h3>
+  <div class="metric-row"><span>Accuracy</span><div class="bar"><div class="fill" style="width: 85.00%;"></div></div><strong>0.8500</strong></div>
+<div class="metric-row"><span>Precision attack</span><div class="bar"><div class="fill" style="width: 83.15%;"></div></div><strong>0.8315</strong></div>
+<div class="metric-row"><span>Recall attack</span><div class="bar"><div class="fill good" style="width: 91.24%;"></div></div><strong>0.9124</strong></div>
+<div class="metric-row"><span>F1 attack</span><div class="bar"><div class="fill good" style="width: 87.01%;"></div></div><strong>0.8701</strong></div>
+<div class="metric-row"><span>ROC-AUC</span><div class="bar"><div class="fill good" style="width: 95.59%;"></div></div><strong>0.9559</strong></div>
+  <h3 style="margin-top: 16px;">Confusion matrix</h3>
+  <div class="matrix">
+    <div class="matrix-cell"><strong class="positive">41,360</strong><span>Attack detected</span></div>
+    <div class="matrix-cell"><strong class="warning">8,380</strong><span>Normal flagged</span></div>
+    <div class="matrix-cell"><strong>28,620</strong><span>Normal allowed</span></div>
+    <div class="matrix-cell"><strong class="negative">3,972</strong><span>Attack missed</span></div>
+  </div>
+</article>
+<article class="panel">
+  <h3>Random Forest</h3>
+  <div class="metric-row"><span>Accuracy</span><div class="bar"><div class="fill" style="width: 88.18%;"></div></div><strong>0.8818</strong></div>
+<div class="metric-row"><span>Precision attack</span><div class="bar"><div class="fill" style="width: 83.29%;"></div></div><strong>0.8329</strong></div>
+<div class="metric-row"><span>Recall attack</span><div class="bar"><div class="fill good" style="width: 98.24%;"></div></div><strong>0.9824</strong></div>
+<div class="metric-row"><span>F1 attack</span><div class="bar"><div class="fill good" style="width: 90.15%;"></div></div><strong>0.9015</strong></div>
+<div class="metric-row"><span>ROC-AUC</span><div class="bar"><div class="fill good" style="width: 97.96%;"></div></div><strong>0.9796</strong></div>
+  <h3 style="margin-top: 16px;">Confusion matrix</h3>
+  <div class="matrix">
+    <div class="matrix-cell"><strong class="positive">44,536</strong><span>Attack detected</span></div>
+    <div class="matrix-cell"><strong class="warning">8,934</strong><span>Normal flagged</span></div>
+    <div class="matrix-cell"><strong>28,066</strong><span>Normal allowed</span></div>
+    <div class="matrix-cell"><strong class="negative">796</strong><span>Attack missed</span></div>
+  </div>
+</article>
+    </section>
+  </main>
+</body>
+</html>

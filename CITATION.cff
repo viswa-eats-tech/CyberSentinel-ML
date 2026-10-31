@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite this software and the UNSW-NB15 dataset papers listed in README.md."
+title: "Network Intrusion Detection System"
+type: software
+authors:
+  - family-names: "Sukulli"
+    given-names: "Antonio"
+repository-code: "https://github.com/Sukulli/Network-Anomaly-Detector"
+url: "https://github.com/Sukulli/Network-Anomaly-Detector"
+license: "MIT"
+version: "0.1.0"
+date-released: "2026-06-22"
+abstract: "End-to-end machine learning project for binary network intrusion detection on UNSW-NB15, with classical model training, FastAPI serving, Docker support and basic monitoring."
+keywords:
+  - intrusion-detection
+  - network-security
+  - machine-learning
+  - fastapi
+  - scikit-learn
+  - unsw-nb15

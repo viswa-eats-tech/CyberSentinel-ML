@@ -1,0 +1,22 @@
+.venv/
+.venv*/
+.env
+.env.*
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+.coverage
+htmlcov/
+*.log
+
+# Local datasets and generated model binaries are too large for normal git commits.
+data/raw/
+data/processed/
+models/*.pkl
+!models/metadata.json
+
+.DS_Store

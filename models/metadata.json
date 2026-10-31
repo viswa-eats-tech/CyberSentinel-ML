@@ -1,0 +1,93 @@
+{
+  "categorical_features": [
+    "proto",
+    "service",
+    "state"
+  ],
+  "dataset": "UNSW-NB15",
+  "decision_threshold": 0.55,
+  "excluded_columns": [
+    "id",
+    "attack_cat"
+  ],
+  "generated_at": "2026-06-17T07:49:02.589247+00:00",
+  "library_versions": {
+    "pandas": "2.3.3",
+    "scikit_learn": "1.9.0"
+  },
+  "metrics": {
+    "accuracy": 0.8818199485011903,
+    "confusion_matrix": {
+      "false_negative": 796,
+      "false_positive": 8934,
+      "true_negative": 28066,
+      "true_positive": 44536
+    },
+    "f1_attack": 0.9015202121414546,
+    "precision_attack": 0.8329156536375538,
+    "recall_attack": 0.9824406600194123,
+    "roc_auc": 0.9796426916968147
+  },
+  "model_thresholds": {
+    "logistic_regression": 0.55,
+    "random_forest": 0.55
+  },
+  "negative_class": {
+    "label": 0,
+    "meaning": "normal"
+  },
+  "numeric_features": [
+    "dur",
+    "spkts",
+    "dpkts",
+    "sbytes",
+    "dbytes",
+    "rate",
+    "sttl",
+    "dttl",
+    "sload",
+    "dload",
+    "sloss",
+    "dloss",
+    "sinpkt",
+    "dinpkt",
+    "sjit",
+    "djit",
+    "swin",
+    "stcpb",
+    "dtcpb",
+    "dwin",
+    "tcprtt",
+    "synack",
+    "ackdat",
+    "smean",
+    "dmean",
+    "trans_depth",
+    "response_body_len",
+    "ct_srv_src",
+    "ct_state_ttl",
+    "ct_dst_ltm",
+    "ct_src_dport_ltm",
+    "ct_dst_sport_ltm",
+    "ct_dst_src_ltm",
+    "is_ftp_login",
+    "ct_ftp_cmd",
+    "ct_flw_http_mthd",
+    "ct_src_ltm",
+    "ct_srv_dst",
+    "is_sm_ips_ports"
+  ],
+  "positive_class": {
+    "label": 1,
+    "meaning": "attack"
+  },
+  "primary_model": "random_forest",
+  "primary_model_display_name": "Random Forest",
+  "primary_model_path": "models/random_forest_model.pkl",
+  "project": "Network Intrusion Detection System",
+  "target": "label",
+  "task": "binary_classification",
+  "test_rows": 82332,
+  "threshold_selection": {},
+  "train_rows": 175341
+}
