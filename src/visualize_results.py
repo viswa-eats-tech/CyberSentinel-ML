@@ -78,7 +78,9 @@ def render_dashboard(results: dict[str, Any]) -> str:
     threshold_panel = render_threshold_selection(results)
     primary_threshold = results.get("decision_threshold")
     primary_name = (
-        "random_forest" if "random_forest" in results["models"] else next(iter(results["models"]))
+        "random_forest"
+        if "random_forest" in results["models"]
+        else next(iter(results["models"]))
     )
     primary_label = MODEL_LABELS.get(primary_name, primary_name)
     comparison_headers = "".join(
@@ -466,7 +468,7 @@ th {{ background: #f8fafc; }}
 <h1>Feature outage and alert triage</h1>
 <p class="muted">Generated {generated_at}. Review budget: {budget}; random baseline:
 {repeats} same-size draws per scenario and seed. Test rows: {test_rows}; training
-seeds: {int(protocol.get('training_seed_count', 1))}. Outages replace all values in
+seeds: {int(protocol.get("training_seed_count", 1))}. Outages replace all values in
 one feature group with missing values. Seed-level sign tests are paired; q-values
 use Benjamini-Hochberg across scenario and category comparisons.</p>
 <section><h2>Scenario summary</h2><div class="table-wrap"><table>
@@ -572,12 +574,7 @@ def render_comparison_row(
         f"<td>{format_metric(metrics.get(metric_key))}</td>"
         for metrics in models.values()
     )
-    return (
-        "<tr>"
-        f"<td>{html.escape(label)}</td>"
-        f"{values}"
-        "</tr>"
-    )
+    return f"<tr><td>{html.escape(label)}</td>{values}</tr>"
 
 
 def format_metric(value: float | None) -> str:

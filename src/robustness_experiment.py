@@ -108,8 +108,7 @@ def main() -> None:
             )
             seed_scenario_results.append(metrics)
             seed_category_results.extend(
-                {**row, "training_seed": training_seed}
-                for row in scenario_categories
+                {**row, "training_seed": training_seed} for row in scenario_categories
             )
             print(
                 f"seed={training_seed} {scenario_name}: "
@@ -263,7 +262,9 @@ def aggregate_seed_results(
             if field in keys or field in {"training_seed", "outage_features"}:
                 continue
             values = [row.get(field) for row in group]
-            numeric_values = [value for value in values if isinstance(value, int | float)]
+            numeric_values = [
+                value for value in values if isinstance(value, int | float)
+            ]
             if numeric_values:
                 result[field] = float(np.mean(numeric_values))
         if "outage_features" in group[0]:
@@ -426,9 +427,7 @@ def compare_uncertainty_with_random(
                 "errors_caught_lift_vs_random_mean": uncertainty_caught
                 - float(random_counts.mean()),
                 "randomization_p_value": float(
-                    (
-                        np.count_nonzero(random_counts >= uncertainty_caught) + 1
-                    )
+                    (np.count_nonzero(random_counts >= uncertainty_caught) + 1)
                     / (random_repeats + 1)
                 )
                 if error_count

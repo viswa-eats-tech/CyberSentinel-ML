@@ -3,7 +3,6 @@ from __future__ import annotations
 import random
 import secrets
 
-
 PROTOCOLS = ("tcp", "udp", "icmp", "arp", "ospf", "sctp")
 TCP_SERVICES = (
     "-",
@@ -21,7 +20,9 @@ TCP_STATES = ("FIN", "CON", "INT", "REQ", "RST")
 OTHER_STATES = ("INT", "CON", "REQ", "RST", "no")
 
 
-def generate_synthetic_flow(rng: random.Random | None = None) -> dict[str, int | float | str]:
+def generate_synthetic_flow(
+    rng: random.Random | None = None,
+) -> dict[str, int | float | str]:
     """Create a new plausible flow from explicit bounds, without reading datasets."""
     generator = rng or random.Random(secrets.randbits(64))
     proto = generator.choice(PROTOCOLS)

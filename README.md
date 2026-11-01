@@ -132,6 +132,7 @@ See [reports/dataset_overview.md](reports/dataset_overview.md).
 
 ## Project Documentation
 
+- [CHANGELOG.md](CHANGELOG.md) records notable project updates.
 - [CONTRIBUTING.md](CONTRIBUTING.md) explains the development workflow, required checks and pull request expectations.
 - [SECURITY.md](SECURITY.md) defines the security reporting process and supported project scope.
 - [RESPONSIBLE_USE.md](RESPONSIBLE_USE.md) describes appropriate use, misuse boundaries and operational limitations.

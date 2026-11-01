@@ -287,7 +287,7 @@ class ModelService:
         ]
 
     def _get_model(self, model_name: str) -> tuple[Any, float]:
-        if not self.model_paths:
+        if not any(path.exists() for path in self.model_paths.values()):
             raise ModelNotLoadedError(
                 "Model is not loaded. Train or restore the model artifact first."
             )

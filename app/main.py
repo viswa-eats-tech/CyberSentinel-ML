@@ -7,6 +7,7 @@ from time import perf_counter
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
+from src.synthetic_flow import generate_synthetic_flow
 from starlette.responses import FileResponse, JSONResponse
 
 from app.inference import ModelService, ModelServiceError, model_service
@@ -30,7 +31,6 @@ from app.schemas import (
     PredictionResponse,
     ResearchExperimentRequest,
 )
-from src.synthetic_flow import generate_synthetic_flow
 
 logger = logging.getLogger(__name__)
 APP_DIR = Path(__file__).resolve().parent
