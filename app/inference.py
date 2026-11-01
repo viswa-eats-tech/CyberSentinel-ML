@@ -15,6 +15,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MODEL_PATH = PROJECT_ROOT / "models" / "model.pkl"
 DEFAULT_METADATA_PATH = PROJECT_ROOT / "models" / "metadata.json"
 DEFAULT_THRESHOLD = 0.5
+MODEL_DISPLAY_NAMES = {
+    "random_forest": "Random Forest",
+    "bagging": "Bagging Classifier",
+    "gradient_boosting": "Gradient Boosting",
+}
 
 
 class ModelServiceError(RuntimeError):
@@ -36,6 +41,11 @@ class ModelNotLoadedError(ModelServiceError):
     status_code = 503
 
 
+class ModelSelectionError(ModelServiceError):
+    error_code = "model_unavailable"
+    status_code = 400
+
+
 class PredictionFailureError(ModelServiceError):
     error_code = "prediction_failed"
     status_code = 500
@@ -53,6 +63,10 @@ class ModelService:
         self.metadata: dict[str, Any] = {}
         self.feature_columns: list[str] = []
         self.threshold = DEFAULT_THRESHOLD
+        self.primary_model_name = "random_forest"
+        self.model_thresholds: dict[str, float] = {}
+        self.model_paths: dict[str, Path] = {}
+        self.loaded_models: dict[str, Any] = {}
         self.load_error: str | None = None
 
     def load(self) -> None:
@@ -60,23 +74,47 @@ class ModelService:
         self.metadata = {}
         self.feature_columns = []
         self.threshold = DEFAULT_THRESHOLD
+        self.primary_model_name = "random_forest"
+        self.model_thresholds = {}
+        self.model_paths = {}
+        self.loaded_models = {}
         self.load_error = None
 
         self.metadata = self._load_metadata()
-        self.threshold = self._load_threshold()
+        self.primary_model_name = self.metadata.get("primary_model", "random_forest")
+        primary_threshold = self._load_threshold()
+        metadata_thresholds = self.metadata.get("model_thresholds", {})
+        has_environment_threshold = os.getenv("NETSHIELD_THRESHOLD") is not None
+        self.model_thresholds = {
+            key: (
+                primary_threshold
+                if has_environment_threshold
+                else float(metadata_thresholds.get(key, primary_threshold))
+            )
+            for key in MODEL_DISPLAY_NAMES
+        }
+        self.threshold = self.model_thresholds.get(
+            self.primary_model_name, primary_threshold
+        )
         self.feature_columns = [
             *self.metadata.get("numeric_features", []),
             *self.metadata.get("categorical_features", []),
         ]
 
-        if not self.model_path.exists():
+        self.model_paths = self._available_model_paths()
+        primary_path = self.model_paths.get(self.primary_model_name, self.model_path)
+        if self.model_path != DEFAULT_MODEL_PATH:
+            primary_path = self.model_path
+            self.model_paths[self.primary_model_name] = primary_path
+
+        if not primary_path.exists():
             self.load_error = (
                 "Model artifact is missing. Train the model before serving predictions."
             )
             raise ModelLoadError(self.load_error)
 
         try:
-            self.model = joblib.load(self.model_path)
+            self.model = joblib.load(primary_path)
         except Exception as exc:
             self.load_error = "Model artifact could not be loaded."
             raise ModelLoadError(self.load_error) from exc
@@ -85,15 +123,16 @@ class ModelService:
             self.model = None
             self.load_error = "Model metadata does not define input feature columns."
             raise ModelLoadError(self.load_error)
+        self.loaded_models[self.primary_model_name] = self.model
 
     def is_loaded(self) -> bool:
         return self.model is not None
 
-    def predict(self, payload: PredictionRequest) -> dict[str, Any]:
-        if self.model is None:
-            raise ModelNotLoadedError(
-                "Model is not loaded. Train or restore the model artifact first."
-            )
+    def predict(
+        self, payload: PredictionRequest, model_name: str | None = None
+    ) -> dict[str, Any]:
+        model_name = model_name or self.primary_model_name
+        model, threshold = self._get_model(model_name)
 
         features = payload.model_dump()
         missing_features = [
@@ -108,27 +147,27 @@ class ModelService:
             [{column: features[column] for column in self.feature_columns}]
         )
         try:
-            attack_probability = float(self.model.predict_proba(row)[0, 1])
+            attack_probability = float(model.predict_proba(row)[0, 1])
         except Exception as exc:
             raise PredictionFailureError(
                 "Prediction failed during model inference."
             ) from exc
 
-        prediction = int(attack_probability >= self.threshold)
+        prediction = int(attack_probability >= threshold)
 
         return {
             "prediction": prediction,
             "prediction_label": "attack" if prediction == 1 else "normal",
             "attack_probability": attack_probability,
-            "threshold": self.threshold,
-            "model_name": self.metadata.get("primary_model_display_name", "unknown"),
+            "threshold": threshold,
+            "model_name": MODEL_DISPLAY_NAMES.get(model_name, model_name),
         }
 
-    def predict_batch(self, payload: BatchPredictionRequest) -> dict[str, Any]:
-        if self.model is None:
-            raise ModelNotLoadedError(
-                "Model is not loaded. Train or restore the model artifact first."
-            )
+    def predict_batch(
+        self, payload: BatchPredictionRequest, model_name: str | None = None
+    ) -> dict[str, Any]:
+        model_name = model_name or self.primary_model_name
+        model, threshold = self._get_model(model_name)
 
         records = [record.model_dump() for record in payload.records]
         for features in records:
@@ -147,13 +186,13 @@ class ModelService:
             ]
         )
         try:
-            probabilities = self.model.predict_proba(rows)[:, 1]
+            probabilities = model.predict_proba(rows)[:, 1]
         except Exception as exc:
             raise PredictionFailureError(
                 "Batch prediction failed during model inference."
             ) from exc
 
-        uncertainty = np.abs(probabilities - self.threshold)
+        uncertainty = np.abs(probabilities - threshold)
         review_count = int(np.floor(payload.review_budget * len(records)))
         reviewed = np.zeros(len(records), dtype=bool)
         if review_count:
@@ -162,7 +201,7 @@ class ModelService:
             ]
             reviewed[review_indices] = True
 
-        model_name = self.metadata.get("primary_model_display_name", "unknown")
+        display_name = MODEL_DISPLAY_NAMES.get(model_name, model_name)
         items = []
         for index, probability in enumerate(probabilities):
             missing_features = [
@@ -170,7 +209,7 @@ class ModelService:
                 for column in self.feature_columns
                 if records[index].get(column) is None
             ]
-            prediction = int(probability >= self.threshold)
+            prediction = int(probability >= threshold)
             prediction_label = "attack" if prediction == 1 else "normal"
             is_review = bool(reviewed[index])
             items.append(
@@ -178,8 +217,8 @@ class ModelService:
                     "prediction": prediction,
                     "prediction_label": prediction_label,
                     "attack_probability": float(probability),
-                    "threshold": self.threshold,
-                    "model_name": model_name,
+                    "threshold": threshold,
+                    "model_name": display_name,
                     "decision": "review" if is_review else prediction_label,
                     "review_reason": (
                         "This record is among the least certain in the submitted batch."
@@ -195,7 +234,7 @@ class ModelService:
             "review_budget": payload.review_budget,
             "review_count": review_count,
             "review_rate": review_count / len(records),
-            "threshold": self.threshold,
+            "threshold": threshold,
             "items": items,
         }
 
@@ -231,7 +270,76 @@ class ModelService:
             "test_rows": self.metadata.get("test_rows"),
             "input_features": len(self.feature_columns) or None,
             "excluded_columns": self.metadata.get("excluded_columns", []),
+            "available_models": [item["name"] for item in self.model_options()],
         }
+
+    def model_options(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "name": name,
+                "display_name": MODEL_DISPLAY_NAMES[name],
+                "available": path.exists(),
+                "is_default": name == self.primary_model_name,
+                "is_loaded": name in self.loaded_models,
+            }
+            for name, path in self.model_paths.items()
+            if name in MODEL_DISPLAY_NAMES
+        ]
+
+    def _get_model(self, model_name: str) -> tuple[Any, float]:
+        if not self.model_paths:
+            raise ModelNotLoadedError(
+                "Model is not loaded. Train or restore the model artifact first."
+            )
+        if model_name not in MODEL_DISPLAY_NAMES:
+            raise ModelSelectionError("Choose one of the listed trained models.")
+        model_path = self.model_paths.get(model_name)
+        if model_path is None or not model_path.exists():
+            raise ModelSelectionError(
+                f"{MODEL_DISPLAY_NAMES[model_name]} is not available. Train it with "
+                "`python -m src.train --model all` first."
+            )
+
+        model = self.loaded_models.get(model_name)
+        if model is None:
+            try:
+                model = joblib.load(model_path)
+            except Exception as exc:
+                raise ModelLoadError(
+                    f"Could not load {MODEL_DISPLAY_NAMES[model_name]} artifact."
+                ) from exc
+            for loaded_name in list(self.loaded_models):
+                if loaded_name != self.primary_model_name:
+                    del self.loaded_models[loaded_name]
+            self.loaded_models[model_name] = model
+        threshold = self.model_thresholds.get(model_name, self.threshold)
+        return model, threshold
+
+    def _available_model_paths(self) -> dict[str, Path]:
+        configured = self.metadata.get("available_models", {})
+        configured_is_authoritative = isinstance(configured, dict) and bool(configured)
+        paths: dict[str, Path] = {}
+        for name in MODEL_DISPLAY_NAMES:
+            if configured_is_authoritative and name not in configured:
+                continue
+            entry = configured.get(name, {}) if isinstance(configured, dict) else {}
+            configured_path = entry.get("path") if isinstance(entry, dict) else entry
+            if configured_path:
+                path = Path(configured_path)
+                if not path.is_absolute():
+                    path = PROJECT_ROOT / path
+            elif self.model_path == DEFAULT_MODEL_PATH:
+                path = PROJECT_ROOT / "models" / f"{name}_model.pkl"
+            elif name == self.primary_model_name:
+                path = self.model_path
+            else:
+                continue
+            if path.exists():
+                paths[name] = path
+
+        if self.primary_model_name not in paths and self.model_path.exists():
+            paths[self.primary_model_name] = self.model_path
+        return paths
 
     def _load_metadata(self) -> dict[str, Any]:
         if not self.metadata_path.exists():

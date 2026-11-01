@@ -2,9 +2,8 @@
 
 ## Project Scope
 
-This repository is an educational and portfolio-oriented machine learning project for binary intrusion detection on the UNSW-NB15 dataset.
+This repository is an educational machine-learning project for binary intrusion detection on the UNSW-NB15 dataset. It is not a production intrusion detection system and should not be used as the only security control in a real network environment.
 
-It is not a production intrusion detection system and should not be used as the only security control in a real network environment.
 
 The current version does not provide:
 

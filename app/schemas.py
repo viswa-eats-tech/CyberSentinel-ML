@@ -231,6 +231,12 @@ class BatchPredictionRequest(BaseModel):
     review_budget: float = Field(..., gt=0, lt=1)
 
 
+class ResearchExperimentRequest(BaseModel):
+    review_budget: float = Field(default=0.1, ge=0.05, le=0.3)
+    training_seeds: int = Field(default=5, ge=2, le=10)
+    random_repeats: int = Field(default=200, ge=100, le=2000)
+
+
 class TriagePredictionResponse(BaseModel):
     prediction: int
     prediction_label: str
@@ -290,6 +296,7 @@ class MetadataResponse(BaseModel):
     test_rows: int | None = None
     input_features: int | None = None
     excluded_columns: list[str]
+    available_models: list[str] = Field(default_factory=list)
 
 
 class ErrorResponse(BaseModel):

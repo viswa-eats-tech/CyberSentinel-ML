@@ -270,7 +270,7 @@
     <header>
       <div>
         <h1>Model Evaluation Report</h1>
-        <div class="muted">UNSW-NB15 binary intrusion detection - generated <span class="mono">2026-06-17T07:49:02.589247+00:00</span></div>
+        <div class="muted">UNSW-NB15 binary intrusion detection - generated <span class="mono">2026-11-01T14:09:05.887315+00:00</span></div>
       </div>
       <div class="badge"><span class="dot"></span> Primary model: Random Forest</div>
     </header>
@@ -280,8 +280,8 @@
       <div class="metric-box"><span>Testing rows</span><strong>82,332</strong></div>
       <div class="metric-box"><span>Input features</span><strong>42</strong></div>
       <div class="metric-box"><span>RF threshold</span><strong>0.5500</strong></div>
-      <div class="metric-box"><span>Attack recall</span><strong>0.9824</strong></div>
-      <div class="metric-box"><span>F1 attack</span><strong>0.9015</strong></div>
+      <div class="metric-box"><span>Attack recall</span><strong>0.9819</strong></div>
+      <div class="metric-box"><span>F1 attack</span><strong>0.9012</strong></div>
     </section>
 
     <section class="model-note">
@@ -295,8 +295,8 @@
       <div class="detail-grid">
         <div class="detail-item"><span>Mode</span><strong>fixed threshold</strong></div>
         <div class="detail-item"><span>Threshold</span><strong>0.5500</strong></div>
-        <div class="detail-item"><span>Test recall</span><strong>0.9824</strong></div>
-        <div class="detail-item"><span>Test F1</span><strong>0.9015</strong></div>
+        <div class="detail-item"><span>Test recall</span><strong>0.9819</strong></div>
+        <div class="detail-item"><span>Test F1</span><strong>0.9012</strong></div>
       </div>
     </section>
 
@@ -306,50 +306,64 @@
         <thead>
           <tr>
             <th>Metric</th>
-            <th>Logistic Regression</th>
-            <th>Random Forest</th>
+            <th>Bagging Classifier</th><th>Gradient Boosting</th><th>Random Forest</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Decision threshold</td><td>0.5500</td><td>0.5500</td></tr>
-<tr><td>Accuracy</td><td>0.8500</td><td>0.8818</td></tr>
-<tr><td>Precision attack</td><td>0.8315</td><td>0.8329</td></tr>
-<tr><td>Recall attack</td><td>0.9124</td><td>0.9824</td></tr>
-<tr><td>F1 attack</td><td>0.8701</td><td>0.9015</td></tr>
-<tr><td>ROC-AUC</td><td>0.9559</td><td>0.9796</td></tr>
+          <tr><td>Decision threshold</td><td>0.5500</td><td>0.5500</td><td>0.5500</td></tr>
+<tr><td>Accuracy</td><td>0.9080</td><td>0.9092</td><td>0.8815</td></tr>
+<tr><td>Precision attack</td><td>0.8751</td><td>0.9043</td><td>0.8328</td></tr>
+<tr><td>Recall attack</td><td>0.9716</td><td>0.9339</td><td>0.9819</td></tr>
+<tr><td>F1 attack</td><td>0.9209</td><td>0.9189</td><td>0.9012</td></tr>
+<tr><td>ROC-AUC</td><td>0.9825</td><td>0.9775</td><td>0.9798</td></tr>
         </tbody>
       </table>
     </section>
 
     <section class="grid">
       <article class="panel">
-  <h3>Logistic Regression</h3>
-  <div class="metric-row"><span>Accuracy</span><div class="bar"><div class="fill" style="width: 85.00%;"></div></div><strong>0.8500</strong></div>
-<div class="metric-row"><span>Precision attack</span><div class="bar"><div class="fill" style="width: 83.15%;"></div></div><strong>0.8315</strong></div>
-<div class="metric-row"><span>Recall attack</span><div class="bar"><div class="fill good" style="width: 91.24%;"></div></div><strong>0.9124</strong></div>
-<div class="metric-row"><span>F1 attack</span><div class="bar"><div class="fill good" style="width: 87.01%;"></div></div><strong>0.8701</strong></div>
-<div class="metric-row"><span>ROC-AUC</span><div class="bar"><div class="fill good" style="width: 95.59%;"></div></div><strong>0.9559</strong></div>
+  <h3>Bagging Classifier</h3>
+  <div class="metric-row"><span>Accuracy</span><div class="bar"><div class="fill" style="width: 90.80%;"></div></div><strong>0.9080</strong></div>
+<div class="metric-row"><span>Precision attack</span><div class="bar"><div class="fill" style="width: 87.51%;"></div></div><strong>0.8751</strong></div>
+<div class="metric-row"><span>Recall attack</span><div class="bar"><div class="fill good" style="width: 97.16%;"></div></div><strong>0.9716</strong></div>
+<div class="metric-row"><span>F1 attack</span><div class="bar"><div class="fill good" style="width: 92.09%;"></div></div><strong>0.9209</strong></div>
+<div class="metric-row"><span>ROC-AUC</span><div class="bar"><div class="fill good" style="width: 98.25%;"></div></div><strong>0.9825</strong></div>
   <h3 style="margin-top: 16px;">Confusion matrix</h3>
   <div class="matrix">
-    <div class="matrix-cell"><strong class="positive">41,360</strong><span>Attack detected</span></div>
-    <div class="matrix-cell"><strong class="warning">8,380</strong><span>Normal flagged</span></div>
-    <div class="matrix-cell"><strong>28,620</strong><span>Normal allowed</span></div>
-    <div class="matrix-cell"><strong class="negative">3,972</strong><span>Attack missed</span></div>
+    <div class="matrix-cell"><strong class="positive">44,046</strong><span>Attack detected</span></div>
+    <div class="matrix-cell"><strong class="warning">6,285</strong><span>Normal flagged</span></div>
+    <div class="matrix-cell"><strong>30,715</strong><span>Normal allowed</span></div>
+    <div class="matrix-cell"><strong class="negative">1,286</strong><span>Attack missed</span></div>
+  </div>
+</article>
+<article class="panel">
+  <h3>Gradient Boosting</h3>
+  <div class="metric-row"><span>Accuracy</span><div class="bar"><div class="fill" style="width: 90.92%;"></div></div><strong>0.9092</strong></div>
+<div class="metric-row"><span>Precision attack</span><div class="bar"><div class="fill" style="width: 90.43%;"></div></div><strong>0.9043</strong></div>
+<div class="metric-row"><span>Recall attack</span><div class="bar"><div class="fill good" style="width: 93.39%;"></div></div><strong>0.9339</strong></div>
+<div class="metric-row"><span>F1 attack</span><div class="bar"><div class="fill good" style="width: 91.89%;"></div></div><strong>0.9189</strong></div>
+<div class="metric-row"><span>ROC-AUC</span><div class="bar"><div class="fill good" style="width: 97.75%;"></div></div><strong>0.9775</strong></div>
+  <h3 style="margin-top: 16px;">Confusion matrix</h3>
+  <div class="matrix">
+    <div class="matrix-cell"><strong class="positive">42,337</strong><span>Attack detected</span></div>
+    <div class="matrix-cell"><strong class="warning">4,479</strong><span>Normal flagged</span></div>
+    <div class="matrix-cell"><strong>32,521</strong><span>Normal allowed</span></div>
+    <div class="matrix-cell"><strong class="negative">2,995</strong><span>Attack missed</span></div>
   </div>
 </article>
 <article class="panel">
   <h3>Random Forest</h3>
-  <div class="metric-row"><span>Accuracy</span><div class="bar"><div class="fill" style="width: 88.18%;"></div></div><strong>0.8818</strong></div>
-<div class="metric-row"><span>Precision attack</span><div class="bar"><div class="fill" style="width: 83.29%;"></div></div><strong>0.8329</strong></div>
-<div class="metric-row"><span>Recall attack</span><div class="bar"><div class="fill good" style="width: 98.24%;"></div></div><strong>0.9824</strong></div>
-<div class="metric-row"><span>F1 attack</span><div class="bar"><div class="fill good" style="width: 90.15%;"></div></div><strong>0.9015</strong></div>
-<div class="metric-row"><span>ROC-AUC</span><div class="bar"><div class="fill good" style="width: 97.96%;"></div></div><strong>0.9796</strong></div>
+  <div class="metric-row"><span>Accuracy</span><div class="bar"><div class="fill" style="width: 88.15%;"></div></div><strong>0.8815</strong></div>
+<div class="metric-row"><span>Precision attack</span><div class="bar"><div class="fill" style="width: 83.28%;"></div></div><strong>0.8328</strong></div>
+<div class="metric-row"><span>Recall attack</span><div class="bar"><div class="fill good" style="width: 98.19%;"></div></div><strong>0.9819</strong></div>
+<div class="metric-row"><span>F1 attack</span><div class="bar"><div class="fill good" style="width: 90.12%;"></div></div><strong>0.9012</strong></div>
+<div class="metric-row"><span>ROC-AUC</span><div class="bar"><div class="fill good" style="width: 97.98%;"></div></div><strong>0.9798</strong></div>
   <h3 style="margin-top: 16px;">Confusion matrix</h3>
   <div class="matrix">
-    <div class="matrix-cell"><strong class="positive">44,536</strong><span>Attack detected</span></div>
+    <div class="matrix-cell"><strong class="positive">44,510</strong><span>Attack detected</span></div>
     <div class="matrix-cell"><strong class="warning">8,934</strong><span>Normal flagged</span></div>
     <div class="matrix-cell"><strong>28,066</strong><span>Normal allowed</span></div>
-    <div class="matrix-cell"><strong class="negative">796</strong><span>Attack missed</span></div>
+    <div class="matrix-cell"><strong class="negative">822</strong><span>Attack missed</span></div>
   </div>
 </article>
     </section>

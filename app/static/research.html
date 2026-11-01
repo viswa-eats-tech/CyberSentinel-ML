@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Compare uncertainty-based and random review when network flow feature groups are missing." />
+    <title>Feature outage study | CyberSentinel</title>
+    <link rel="stylesheet" href="/static/research.css?v=2" />
+    <script src="/static/research.js" defer></script>
+  </head>
+  <body>
+    <div class="research-shell">
+      <header class="research-header">
+        <a class="brand" href="/">CyberSentinel / Flow Review</a>
+        <a href="/docs">API documentation</a>
+      </header>
+
+      <main>
+        <section class="hero">
+          <p class="eyebrow">RESEARCH STUDY · UNSW-NB15</p>
+          <h1>Does uncertainty help when flow features disappear?</h1>
+          <p class="lead">At a fixed review workload, compare how many model errors are caught by reviewing the least-certain flows versus reviewing a random sample. Explore whether the difference changes by missing feature group or attack category.</p>
+          <div class="plain-note"><strong>In plain language:</strong> hide one whole group of flow measurements, let the model predict, then compare which review queue contains more mistakes. The test labels are used only to count mistakes after the queue is selected.</div>
+        </section>
+
+        <section class="controls card">
+          <div>
+            <p class="eyebrow">RUN THE EXPERIMENT</p>
+            <h2>Make the result more repeatable</h2>
+            <p class="muted">Each training seed fits a fresh model. The report summarizes how consistently uncertainty review beats the random baseline.</p>
+          </div>
+          <form id="run-form" class="run-form">
+            <label>Review workload
+              <select id="budget">
+                <option value="0.05">5%</option>
+                <option value="0.10" selected>10%</option>
+                <option value="0.20">20%</option>
+                <option value="0.30">30%</option>
+              </select>
+            </label>
+            <label>Training seeds
+              <select id="seeds">
+                <option value="3">3 (quicker)</option>
+                <option value="5" selected>5 (recommended)</option>
+                <option value="8">8</option>
+                <option value="10">10</option>
+              </select>
+            </label>
+            <label>Random comparisons per seed
+              <select id="repeats">
+                <option value="100">100</option>
+                <option value="200" selected>200</option>
+                <option value="500">500</option>
+                <option value="1000">1,000</option>
+                <option value="2000">2,000</option>
+              </select>
+            </label>
+            <button class="button primary" id="run-button" type="submit">Run study</button>
+          </form>
+          <div id="run-status" class="run-status" role="status" aria-live="polite">Loading the saved study…</div>
+        </section>
+
+        <section id="empty-state" class="card empty-state" hidden>
+          <h2>No saved results yet</h2>
+          <p>Run the study above. It needs the UNSW-NB15 training and testing CSV files in the project’s configured data directory.</p>
+        </section>
+
+        <div id="results" hidden>
+          <section class="summary-grid" id="summary-cards"></section>
+
+          <section class="card">
+            <div class="section-heading">
+              <div><p class="eyebrow">ALL SCENARIOS</p><h2>Errors caught at the same workload</h2></div>
+              <span id="report-meta" class="muted"></span>
+            </div>
+            <p class="muted explanation">“Lift” is the extra number of errors caught by uncertainty review versus the average random review. Seed consistency shows how many model fits had positive lift. The adjusted q-value accounts for checking many scenarios and categories at once.</p>
+            <div class="table-wrap"><table><thead><tr>
+              <th>Missing feature group</th><th>Reviewed</th><th>Uncertainty caught</th><th>Random average</th><th>Mean lift</th><th>Seeds ahead</th><th>Adjusted q</th>
+            </tr></thead><tbody id="scenario-rows"></tbody></table></div>
+          </section>
+
+          <section class="card">
+            <div class="section-heading category-heading">
+              <div><p class="eyebrow">ATTACK CATEGORY DETAIL</p><h2>Where does the benefit show up?</h2></div>
+              <label>Scenario
+                <select id="scenario-select"></select>
+              </label>
+            </div>
+            <p class="muted explanation">Rows are grouped by the dataset’s attack label. “Normal” shows false-alarm errors. Tiny error counts can make category rates unstable; check the error count before interpreting them.</p>
+            <div class="table-wrap"><table><thead><tr>
+              <th>Category</th><th>Flows</th><th>Errors</th><th>Uncertainty caught</th><th>Random average</th><th>Mean lift</th><th>Error capture</th><th>Seeds ahead</th><th>Adjusted q</th>
+            </tr></thead><tbody id="category-rows"></tbody></table></div>
+          </section>
+
+          <section class="card limitations">
+            <h2>How to interpret this study</h2>
+            <ul>
+              <li>Outages are simulated by replacing every value in a feature group with missing values; they are not captured from a live network.</li>
+              <li>Both review policies receive the same total review count in each scenario. Their category-level review counts can differ.</li>
+              <li>Attack labels are used only after selection to score the review queues; they are excluded from model inputs.</li>
+              <li>Sign tests compare paired lifts across training seeds. Adjusted q-values use Benjamini–Hochberg across the reported scenario and category comparisons.</li>
+              <li>This is a research evaluation on one dataset split, not evidence of production security performance.</li>
+            </ul>
+            <a id="download-json" class="download-link" href="/research/feature-outages/results">Open the full results JSON</a>
+          </section>
+        </div>
+      </main>
+      <footer>For learning and research. Not a production security control.</footer>
+    </div>
+  </body>
+</html>

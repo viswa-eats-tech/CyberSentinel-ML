@@ -15,8 +15,9 @@ METRICS = [
 ]
 
 MODEL_LABELS = {
-    "logistic_regression": "Logistic Regression",
     "random_forest": "Random Forest",
+    "bagging": "Bagging Classifier",
+    "gradient_boosting": "Gradient Boosting",
 }
 
 
@@ -76,6 +77,14 @@ def render_dashboard(results: dict[str, Any]) -> str:
     primary_model = results["models"].get("random_forest", {})
     threshold_panel = render_threshold_selection(results)
     primary_threshold = results.get("decision_threshold")
+    primary_name = (
+        "random_forest" if "random_forest" in results["models"] else next(iter(results["models"]))
+    )
+    primary_label = MODEL_LABELS.get(primary_name, primary_name)
+    comparison_headers = "".join(
+        f"<th>{html.escape(MODEL_LABELS.get(name, name))}</th>"
+        for name in results["models"]
+    )
 
     return f"""<!doctype html>
 <html lang="en">
@@ -351,7 +360,7 @@ def render_dashboard(results: dict[str, Any]) -> str:
         <h1>Model Evaluation Report</h1>
         <div class="muted">UNSW-NB15 binary intrusion detection - generated <span class="mono">{generated_at}</span></div>
       </div>
-      <div class="badge"><span class="dot"></span> Primary model: Random Forest</div>
+      <div class="badge"><span class="dot"></span> Primary model: {html.escape(primary_label)}</div>
     </header>
 
     <section class="summary">
@@ -376,8 +385,7 @@ def render_dashboard(results: dict[str, Any]) -> str:
         <thead>
           <tr>
             <th>Metric</th>
-            <th>Logistic Regression</th>
-            <th>Random Forest</th>
+            {comparison_headers}
           </tr>
         </thead>
         <tbody>
@@ -400,11 +408,12 @@ def render_robustness_dashboard(results: dict[str, Any]) -> str:
         "<tr>"
         f"<td>{html.escape(str(row['scenario']))}</td>"
         f"<td>{format_percent(row['review_rate'])}</td>"
-        f"<td>{format_percent(row['automatic_coverage'])}</td>"
-        f"<td>{format_percent(row['baseline_accuracy'])}</td>"
-        f"<td>{format_percent(row['automatic_accuracy'])}</td>"
-        f"<td>{format_percent(row['baseline_error_capture_rate'])}</td>"
-        f"<td>{format_percent(row['attack_recall_all_rows'])}</td>"
+        f"<td>{float(row['total_baseline_errors']):.1f}</td>"
+        f"<td>{float(row['uncertainty_errors_caught']):.1f}</td>"
+        f"<td>{float(row['random_mean_errors_caught']):.1f}</td>"
+        f"<td>{float(row['errors_caught_lift_vs_random_mean']):+.1f}</td>"
+        f"<td>{int(row.get('seeds_beating_random', 0))}/{int(row.get('training_seed_count', 1))}</td>"
+        f"<td>{format_percent(row.get('fdr_q_value', row.get('randomization_p_value')))}</td>"
         "</tr>"
         for row in results.get("scenarios", [])
     )
@@ -412,22 +421,28 @@ def render_robustness_dashboard(results: dict[str, Any]) -> str:
         "<tr>"
         f"<td>{html.escape(str(row['scenario']))}</td>"
         f"<td>{html.escape(str(row['attack_category']))}</td>"
-        f"<td>{int(row['rows'])}</td>"
-        f"<td>{format_percent(row['review_rate'])}</td>"
-        f"<td>{format_percent(row['attack_recall_all_rows'])}</td>"
-        f"<td>{int(row['attacks_caught_by_review'])}</td>"
+        f"<td>{float(row['rows']):.1f}</td>"
+        f"<td>{float(row['baseline_errors']):.1f}</td>"
+        f"<td>{float(row['uncertainty_errors_caught']):.1f}</td>"
+        f"<td>{float(row['random_mean_errors_caught']):.2f}</td>"
+        f"<td>{float(row['errors_caught_lift_vs_random_mean']):+.2f}</td>"
+        f"<td>{format_percent(row['uncertainty_error_capture_rate'])}</td>"
+        f"<td>{int(row.get('seeds_beating_random', 0))}/{int(row.get('training_seed_count', 1))}</td>"
+        f"<td>{format_percent(row.get('fdr_q_value', row.get('randomization_p_value')))}</td>"
         "</tr>"
         for row in results.get("attack_category_results", [])
     )
     generated_at = html.escape(str(results.get("generated_at", "unknown")))
     protocol = results.get("protocol", {})
     budget = format_percent(protocol.get("review_budget_target", 0))
+    repeats = int(protocol.get("random_review_repeats", 0))
     test_rows = int(protocol.get("official_test_rows", 0))
     category_section = (
         f"""<section><h2>Attack category results</h2>
 <div class="table-wrap"><table><thead><tr>
-<th>Scenario</th><th>Category</th><th>Rows</th><th>Review rate</th>
-<th>Attack recall</th><th>Attacks reviewed</th>
+<th>Scenario</th><th>Category</th><th>Rows</th><th>Baseline errors</th>
+<th>Errors caught by uncertainty</th><th>Random mean</th><th>Lift</th>
+<th>Category error capture</th><th>Seeds ahead</th><th>Adjusted q</th>
 </tr></thead><tbody>{category_rows}</tbody></table></div></section>"""
         if category_rows
         else ""
@@ -449,13 +464,15 @@ th, td {{ text-align: left; border-bottom: 1px solid #e5e9ef; padding: 10px; }}
 th {{ background: #f8fafc; }}
 </style></head><body><main>
 <h1>Feature outage and alert triage</h1>
-<p class="muted">Generated {generated_at}. Target review budget: {budget}. 
-Official test rows: {test_rows}. Outage scenarios are simulated by replacing
-all values in a feature group with missing values.</p>
+<p class="muted">Generated {generated_at}. Review budget: {budget}; random baseline:
+{repeats} same-size draws per scenario and seed. Test rows: {test_rows}; training
+seeds: {int(protocol.get('training_seed_count', 1))}. Outages replace all values in
+one feature group with missing values. Seed-level sign tests are paired; q-values
+use Benjamini-Hochberg across scenario and category comparisons.</p>
 <section><h2>Scenario summary</h2><div class="table-wrap"><table>
-<thead><tr><th>Scenario</th><th>Review rate</th><th>Automatic coverage</th>
-<th>Baseline accuracy</th><th>Automatic accuracy</th>
-<th>Baseline errors caught</th><th>Attack recall</th></tr></thead>
+<thead><tr><th>Scenario</th><th>Review rate</th><th>Baseline errors</th>
+<th>Uncertainty errors caught</th><th>Random mean</th><th>Lift (#)</th>
+<th>Seeds ahead</th><th>Adjusted q</th></tr></thead>
 <tbody>{scenario_rows}</tbody></table></div></section>
 {category_section}
 </main></body></html>"""
@@ -551,13 +568,14 @@ def render_comparison_row(
     metric_key: str,
     label: str,
 ) -> str:
-    logistic = models.get("logistic_regression", {}).get(metric_key)
-    random_forest = models.get("random_forest", {}).get(metric_key)
+    values = "".join(
+        f"<td>{format_metric(metrics.get(metric_key))}</td>"
+        for metrics in models.values()
+    )
     return (
         "<tr>"
         f"<td>{html.escape(label)}</td>"
-        f"<td>{format_metric(logistic)}</td>"
-        f"<td>{format_metric(random_forest)}</td>"
+        f"{values}"
         "</tr>"
     )
 

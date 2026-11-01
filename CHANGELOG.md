@@ -9,7 +9,7 @@ Initial portfolio-ready MVP release.
 ### Added
 
 - End-to-end binary intrusion detection workflow on UNSW-NB15.
-- Logistic Regression baseline and Random Forest primary model.
+- Random Forest, Bagging Classifier and Gradient Boosting model options.
 - Reusable scikit-learn preprocessing and model pipelines.
 - Fixed operational Random Forest threshold at `0.55`.
 - FastAPI inference service with `/health`, `/metadata`, `/predict`, `/metrics`, `/monitoring` and `/monitoring/snapshot`.

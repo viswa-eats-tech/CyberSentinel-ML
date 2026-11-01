@@ -14,7 +14,7 @@ METADATA_PATH = PROJECT_ROOT / "models" / "metadata.json"
 
 pytestmark = pytest.mark.skipif(
     not MODEL_PATH.exists(),
-    reason="models/model.pkl is required. Run `python -m src.train --model both` first.",
+    reason="models/model.pkl is required. Run `python -m src.train --model all` first.",
 )
 
 

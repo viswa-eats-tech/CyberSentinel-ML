@@ -108,4 +108,4 @@ The first ML pipeline should use:
 - categorical features: `proto`, `service`, `state`
 - metrics: precision, recall, F1-score, ROC-AUC, confusion matrix
 
-This is enough to start the baseline Logistic Regression and the main Random Forest model.
+This is enough to train the project's Random Forest, Bagging and Gradient Boosting models.

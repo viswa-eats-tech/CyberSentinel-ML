@@ -1,4 +1,18 @@
 {
+  "available_models": {
+    "bagging": {
+      "display_name": "Bagging Classifier",
+      "path": "models/bagging_model.pkl"
+    },
+    "gradient_boosting": {
+      "display_name": "Gradient Boosting",
+      "path": "models/gradient_boosting_model.pkl"
+    },
+    "random_forest": {
+      "display_name": "Random Forest",
+      "path": "models/random_forest_model.pkl"
+    }
+  },
   "categorical_features": [
     "proto",
     "service",
@@ -10,26 +24,27 @@
     "id",
     "attack_cat"
   ],
-  "generated_at": "2026-10-31T11:25:56.570722+00:00",
+  "generated_at": "2026-11-01T14:09:05.887315+00:00",
   "library_versions": {
-    "pandas": "2.2.2",
-    "scikit_learn": "1.5.0"
+    "pandas": "2.3.3",
+    "scikit_learn": "1.9.1"
   },
   "metrics": {
-    "accuracy": 0.8814312782393238,
+    "accuracy": 0.8815041539134237,
     "confusion_matrix": {
-      "false_negative": 797,
-      "false_positive": 8965,
-      "true_negative": 28035,
-      "true_positive": 44535
+      "false_negative": 822,
+      "false_positive": 8934,
+      "true_negative": 28066,
+      "true_positive": 44510
     },
-    "f1_attack": 0.9012263234579894,
-    "precision_attack": 0.8324299065420561,
-    "recall_attack": 0.9824186005470749,
-    "roc_auc": 0.9799755247173405
+    "f1_attack": 0.9012310682756945,
+    "precision_attack": 0.8328343686849786,
+    "recall_attack": 0.9818671137386393,
+    "roc_auc": 0.9798472002952393
   },
   "model_thresholds": {
-    "logistic_regression": 0.55,
+    "bagging": 0.55,
+    "gradient_boosting": 0.55,
     "random_forest": 0.55
   },
   "negative_class": {

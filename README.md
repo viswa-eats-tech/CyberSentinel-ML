@@ -1,13 +1,11 @@
-# Network Intrusion Detection System
+# CyberSentinel-ML: Network Intrusion Detection
 
-[![CI](https://github.com/Sukulli/Network-Anomaly-Detector/actions/workflows/ci.yml/badge.svg)](https://github.com/Sukulli/Network-Anomaly-Detector/actions/workflows/ci.yml)
+[![CI](https://github.com/viswa-eats-tech/CyberSentinel-ML/actions/workflows/ci.yml/badge.svg)](https://github.com/viswa-eats-tech/CyberSentinel-ML/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-End-to-end machine learning project for binary network intrusion detection on the UNSW-NB15 dataset.
+CyberSentinel-ML is an end-to-end machine-learning project for binary network intrusion detection using the UNSW-NB15 benchmark dataset. It covers dataset loading, preprocessing, model training and comparison, a browser-based flow review page, a REST API, and an uncertainty-based review experiment.
 
-The project trains classical ML classifiers, saves a reusable scikit-learn pipeline, exposes the main model through a FastAPI REST API, and provides basic Prometheus-compatible monitoring.
-
-Deep learning is intentionally out of scope for this first version. The goal is to build a complete, reproducible, explainable, and deployable ML system before adding more complex modeling techniques.
+The project uses three classical classifiers: Random Forest, Bagging, and Gradient Boosting. Each saved artifact includes the preprocessing pipeline and classifier. Random Forest is the default serving model; the other trained models can be selected in the interface or API. This is a research and learning prototype, not a live packet sensor or production intrusion-prevention system.
 
 ## Scope
 
@@ -15,86 +13,104 @@ Deep learning is intentionally out of scope for this first version. The goal is 
 - Task: binary classification
 - Target: `label`
 - Classes: `0 = normal`, `1 = attack`
-- Baseline model: Logistic Regression
-- Main model: Random Forest
+- Models: Random Forest, Bagging Classifier and Gradient Boosting
+- Primary serving model: Random Forest
 - Serving: FastAPI
 - Monitoring: Prometheus metrics plus a simple HTML monitoring page
 - Containerization: Docker and Docker Compose
 
-## Architecture
+## System Architecture
 
-```text
-UNSW-NB15 CSV files
-        |
-        v
-Data loading and feature split
-        |
-        v
-Preprocessing pipeline
-  - numeric features passthrough/scaling depending on model
-  - categorical one-hot encoding
-        |
-        v
-Model training
-  - Logistic Regression baseline
-  - Random Forest main model
-        |
-        v
-Saved scikit-learn pipeline
-        |
-        v
-FastAPI inference service
-        |
-        v
-/predict, /health, /metadata, /metrics, /monitoring
+```mermaid
+flowchart LR
+    A[UNSW-NB15 train and test CSVs] --> B[Load and validate columns]
+    B --> C[Split label from features<br/>drop id and attack_cat]
+    C --> D[Preprocessing pipeline<br/>impute missing values<br/>one-hot encode categories]
+    D --> E1[Random Forest]
+    D --> E2[Bagging]
+    D --> E3[Gradient Boosting]
+    E1 --> F[Evaluation reports and model artifacts]
+    E2 --> F
+    E3 --> F
+    F --> G[FastAPI model service]
+    G --> H[Browser flow review page]
+    G --> I[REST prediction endpoints]
+    G --> J[Prometheus metrics and monitoring]
+    A --> K[Feature-outage experiment]
+    K --> L[Uncertainty review vs random review]
 ```
+
+### Training and inference flow
+
+1. `src.data_loader` reads the official training and testing CSVs. The official split is kept intact; the test set is used for final reporting.
+2. `src.preprocessor` builds a scikit-learn `ColumnTransformer` and `Pipeline`. Numeric columns are imputed; categorical columns are imputed and one-hot encoded. `id`, `label`, and `attack_cat` are not model inputs.
+3. `src.train` fits the selected classifiers and evaluates them at the requested probability threshold. With `--model all`, all three are trained and their metrics are written to `reports/`.
+4. Training saves reusable `.pkl` pipelines in `models/`. The API uses Random Forest by default; other trained models can be selected in the web page or on prediction requests.
+5. `app.main` serves the web interface and JSON API. `app.monitoring` records request counts, failures, and latency for `/metrics` and the monitoring page.
+6. `src.robustness_experiment` runs a separate research evaluation: it removes groups of features, then compares uncertainty-ranked review against same-size random review.
+
+### Main project files
+
+| Path | Purpose |
+| --- | --- |
+| `app/main.py` | FastAPI routes, static pages, predictions, health, and research endpoints |
+| `app/inference.py` | Model artifact loading, feature validation, and inference |
+| `app/monitoring.py` | Prometheus metrics and monitoring view |
+| `app/static/` | Flow entry, evaluation, and feature-outage study pages |
+| `src/data_loader.py` | Dataset paths, CSV loading, target and feature splitting |
+| `src/preprocessor.py` | Reusable preprocessing pipeline |
+| `src/train.py` | Training CLI, model saving, metadata, and result reports |
+| `src/evaluate.py` | Classification metrics and review selection |
+| `src/robustness_experiment.py` | Repeated feature-outage and review-policy experiment |
+| `src/analyze_random_forest.py` | Random Forest threshold and feature-importance analysis |
+| `src/synthetic_flow.py` | New bounded synthetic inputs for trying the web form |
+| `reports/` | Saved evaluation results, dashboards, sample requests, and experiment output |
+| `tests/` | API, data contracts, and ML workflow checks |
 
 ## Project Structure
 
 ```text
-network-anomaly-detector/
-├── app/                    # FastAPI app, inference service and monitoring
-├── docs/                   # Portfolio screenshots and documentation assets
-├── data/                   # Local data folder, raw data is not committed
-├── models/                 # Metadata is tracked, binary models are ignored
-├── notebooks/              # Exploratory notebooks
-├── reports/                # Dataset, training, analysis and dashboard outputs
-├── src/                    # Data loading, preprocessing, training and evaluation
-├── tests/                  # API, contract and ML pipeline tests
-├── CHANGELOG.md
-├── CITATION.cff
-├── CONTRIBUTING.md
-├── Dockerfile
-├── LICENSE
-├── RESPONSIBLE_USE.md
-├── SECURITY.md
-├── docker-compose.yml
-├── pyproject.toml
-├── pytest.ini
-├── requirements-dev.txt
-├── requirements.txt
-└── README.md
+CyberSentinel-ML/
+|-- app/                  FastAPI application and static website
+|   `-- static/           Flow review, results, and research pages
+|-- data/                 Local UNSW-NB15 CSV files (not committed)
+|-- models/               Model metadata and local model artifacts
+|-- notebooks/            Exploratory analysis notebooks
+|-- reports/              Evaluation reports, dashboards, and sample requests
+|-- src/                  Loading, preprocessing, training, and experiments
+|-- tests/                API, contract, and ML workflow checks
+|-- README.md
+|-- requirements.txt
+`-- requirements-dev.txt
 ```
 
 ## Dataset
 
-This project expects the official pre-split UNSW-NB15 CSV files:
+Download the dataset from the [official UNSW-NB15 dataset page](https://research.unsw.edu.au/projects/unsw-nb15-dataset) and extract the two official pre-split CSV files:
 
 ```text
 UNSW_NB15_training-set.csv
 UNSW_NB15_testing-set.csv
 ```
 
-By default, the code first checks this project-local folder:
+Place both files in this project-local folder:
 
 ```text
 data/Training and Testing Sets/
 ```
 
-If it is not present, the code checks the sibling folder
+By default, the loader checks `data/Training and Testing Sets/`. If that folder
+does not exist, it checks the sibling folder
 `../UNSW-NB15 dataset/CSV Files/Training and Testing Sets/`.
 
-If your dataset is stored elsewhere, set:
+If the dataset is stored elsewhere, set `UNSW_NB15_DATA_DIR` to the directory
+that directly contains both CSV files. In Windows PowerShell:
+
+```powershell
+$env:UNSW_NB15_DATA_DIR = "C:\datasets\UNSW-NB15\Training and Testing Sets"
+```
+
+On macOS or Linux:
 
 ```bash
 export UNSW_NB15_DATA_DIR="/path/to/Training and Testing Sets"
@@ -141,10 +157,11 @@ The current model artifacts were trained with an operational decision threshold 
 
 | Model | Threshold | Accuracy | Precision attack | Recall attack | F1 attack | ROC-AUC |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Logistic Regression | 0.55 | 0.8500 | 0.8315 | 0.9124 | 0.8701 | 0.9559 |
-| Random Forest | 0.55 | 0.8818 | 0.8329 | 0.9824 | 0.9015 | 0.9796 |
+| Random Forest | 0.55 | 0.8815 | 0.8328 | 0.9819 | 0.9012 | 0.9798 |
+| Bagging Classifier | 0.55 | 0.9080 | 0.8751 | 0.9716 | 0.9209 | 0.9825 |
+| Gradient Boosting | 0.55 | 0.9092 | 0.9043 | 0.9339 | 0.9189 | 0.9775 |
 
-Random Forest is the main model because it provides the strongest overall test-set performance in this version, especially on attack recall and F1-score.
+Random Forest remains the default serving model because it has the highest attack recall in this run. Bagging has the strongest ROC-AUC and attack F1; Gradient Boosting has the highest accuracy and attack precision. The preferred model depends on the relative cost of missed attacks and false alarms.
 
 At threshold `0.55`, the Random Forest confusion matrix on the test set is:
 
@@ -152,10 +169,20 @@ At threshold `0.55`, the Random Forest confusion matrix on the test set is:
 | --- | ---: |
 | True negative | 28,066 |
 | False positive | 8,934 |
-| False negative | 796 |
-| True positive | 44,536 |
+| False negative | 822 |
+| True positive | 44,510 |
 
-This threshold is a deliberate operating point: it keeps attack recall high while reducing the number of false positives compared with a more aggressive threshold such as `0.45`.
+Confusion matrices for all models at the same threshold:
+
+| Model | True negative | False positive | False negative | True positive |
+| --- | ---: | ---: | ---: | ---: |
+| Random Forest | 28,066 | 8,934 | 822 | 44,510 |
+| Bagging Classifier | 30,715 | 6,285 | 1,286 | 44,046 |
+| Gradient Boosting | 32,521 | 4,479 | 2,995 | 42,337 |
+
+The `0.55` threshold is an operating choice for this saved run, not a universal optimum. Raising or lowering it changes the balance between false alarms and missed attacks. Compare the confusion matrix and intended use before choosing a threshold.
+
+Metric guide: **precision** is the fraction of attack predictions that are attacks; **recall** is the fraction of actual attacks detected; **F1** balances precision and recall; **ROC-AUC** measures ranking quality across thresholds. Accuracy can hide class-specific errors, so it should not be read on its own.
 
 Detailed reports:
 
@@ -166,25 +193,15 @@ Detailed reports:
 - [reports/random_forest_feature_importance.csv](reports/random_forest_feature_importance.csv)
 - [reports/random_forest_grouped_feature_importance.csv](reports/random_forest_grouped_feature_importance.csv)
 
-## Screenshots
+## Web pages
 
-The screenshots below show the main evaluation report, the FastAPI documentation, a successful `/predict` request and the runtime monitoring page.
+The local site provides three main views:
 
-### Model Evaluation Report
+- `/` ? enter one flow, review a batch, or generate bounded synthetic examples.
+- `/results` ? compare model metrics, error counts, confusion matrices, and class reports.
+- `/research/feature-outages` ? inspect and run the feature-outage review experiment.
 
-![Model evaluation report](docs/images/model-evaluation-report.png)
-
-### API Documentation
-
-![FastAPI documentation](docs/images/api-docs.png)
-
-### Successful Prediction Request
-
-![Successful prediction response](docs/images/predict-response.png)
-
-### Monitoring Dashboard
-
-![Monitoring dashboard](docs/images/monitoring-dashboard.png)
+The API's interactive schema is at `/docs`; live request metrics are at `/monitoring`.
 
 ## Random Forest Interpretation
 
@@ -212,15 +229,25 @@ Feature importance is useful for model inspection, but it should not be interpre
 
 ## Setup
 
-Python 3.12 is recommended.
+Python 3.12 is used by CI and is recommended. Run these commands from the
+repository root. On Windows PowerShell:
+
+```powershell
+git clone https://github.com/viswa-eats-tech/CyberSentinel-ML.git
+cd CyberSentinel-ML
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
+```
+
+On macOS or Linux:
 
 ```bash
-git clone https://github.com/Sukulli/Network-Anomaly-Detector.git
-cd network-anomaly-detector
-
 python3.12 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements-dev.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements-dev.txt
 ```
 
 `requirements.txt` contains runtime dependencies used for training, reports and API serving.
@@ -229,29 +256,43 @@ Docker intentionally installs only `requirements.txt`.
 
 Code quality tooling is configured in `pyproject.toml`.
 
-Verify the environment:
+If PowerShell blocks virtual-environment activation, you can call the venv's
+Python directly as `.\.venv\Scripts\python.exe -m pip install -r
+requirements-dev.txt`; prefix later Python commands with
+`.\.venv\Scripts\python.exe` as well. Using `python -m ...` keeps tools such
+as Uvicorn available from the active interpreter.
+
+Verify the environment and dataset paths:
 
 ```bash
 python --version
 python -c "import pandas as pd; import sklearn; print(pd.__version__, sklearn.__version__)"
+python -c "from src.data_loader import training_csv_path, testing_csv_path; print(training_csv_path()); print(testing_csv_path())"
 ```
 
 ## Training
 
-Train both models with the current operational threshold:
+Train and compare the available ensemble models with the current threshold:
 
 ```bash
-python -m src.train --model both --threshold 0.55
+python -m src.train --model all --threshold 0.55
 ```
+
+To train just one classifier, replace `all` with `random_forest`, `bagging`,
+or `gradient_boosting`. Use `python -m src.train --help` to see the dataset,
+artifact, report, sampling, and threshold options.
 
 This writes:
 
-- `models/logistic_regression_model.pkl`
 - `models/random_forest_model.pkl`
+- `models/bagging_model.pkl` and `models/gradient_boosting_model.pkl` when using `--model all`
 - `models/model.pkl`
 - `models/metadata.json`
 - `reports/training_results.md`
 - `reports/training_results.json`
+
+The prediction page lists models found in the current training metadata and loads
+selected model artifacts on demand.
 
 Generate the HTML training dashboard:
 
@@ -268,22 +309,37 @@ python -m src.analyze_random_forest
 ### Feature outage and review-budget experiment
 
 The robustness experiment evaluates the Random Forest when one group of flow
-features is unavailable. It compares the ordinary threshold decision with a
-triage policy that routes low-confidence records for review. The review cutoff
-selects the requested fraction of most uncertain records within each evaluation
-batch. The official test set is used for final evaluation; its labels do not
-affect which records are routed for review.
+features is unavailable. It compares uncertainty-based review with uniform
+random review at the same fixed workload. The uncertainty policy routes the
+requested fraction of records closest to the decision threshold. The official
+test set is used only for final evaluation; labels do not affect which records
+are selected by either policy. Results are also broken down by attack category.
 
 ```bash
 python -m src.robustness_experiment --review-budget 0.10 --decision-threshold 0.55
 ```
 
-This writes `reports/feature_robustness_results.json`, a scenario summary CSV,
-and per-attack-category results. `attack_cat` is used only to break down test
-results; it is excluded from model inputs. The simulated outages replace all
-values in a named feature group with missing values. This is a controlled
-stress test, not evidence of performance on live network traffic. The batch
-ranking policy assumes a review queue with a fixed capacity for each batch.
+The experiment fits five models with different training seeds by default
+(configurable with `--training-seeds`) and uses 200 random-review draws per
+seed and outage scenario (configurable with `--random-repeats`). The summary
+reports the mean paired lift, how many seeds beat random review, an exact
+two-sided sign test across seeds, and Benjamini-Hochberg adjusted q-values
+across scenario and attack-category comparisons. Small category error counts
+remain difficult to interpret even with these adjustments. It writes
+`reports/feature_robustness_results.json`, a scenario summary CSV, and a
+per-attack-category comparison CSV. Per-seed measurements are also retained in
+the JSON report. `attack_cat` is used only to break down
+test results; it is excluded from model inputs. Simulated outages replace all
+values in a named feature group with missing values. This controlled stress
+test is not evidence of performance on live network traffic.
+
+In the saved run, the clean-feature scenario routed 8,233 of 82,332 test rows
+(10%) for review. Across five training seeds, uncertainty review caught an
+average of about 3,892 model errors, compared with about 976 for same-size
+random review. This is a descriptive result on this dataset split. The adjusted
+q-value is about 0.095, so it does not meet a 0.05 significance cutoff after
+the experiment's multiple-comparison correction. Attack-category results and
+other outage scenarios are available in the report and dashboard below.
 
 Generate the experiment dashboard:
 
@@ -296,30 +352,69 @@ python -m src.visualize_results \
 Quick smoke training on a stratified sample:
 
 ```bash
-python -m src.train --model both --sample-size 5000 --no-save --reports-dir /tmp/netshield-smoke-reports
+python -m src.train --model all --sample-size 5000 --no-save --reports-dir /tmp/netshield-smoke-reports
+```
+
+On Windows PowerShell, use a temporary folder under `%TEMP%` instead:
+
+```powershell
+python -m src.train --model all --sample-size 5000 --no-save --reports-dir "$env:TEMP\cybersentinel-smoke-reports"
 ```
 
 Optional threshold search for Random Forest:
 
 ```bash
-python -m src.train --model both --threshold 0.55 --auto-threshold
+python -m src.train --model all --threshold 0.55 --auto-threshold
 ```
 
 The final project currently uses fixed threshold `0.55`, not the automatic threshold mode.
 
-## Run The API Locally
+## Run the Website and API Locally
 
-Make sure the model files exist first. If `models/model.pkl` is missing, run the training command.
+Train the models first if `models/model.pkl` is missing. Model binaries are
+excluded from Git, so a fresh clone needs the dataset and a local training run.
 
-```bash
-uvicorn app.main:app --host 127.0.0.1 --port 8000
+```powershell
+python -m src.train --model all --threshold 0.55
+python -m src.visualize_results
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-Open:
+The `uvicorn` command stays in the foreground while the server runs. Stop it
+with `Ctrl+C`. On macOS or Linux, the same commands work after activating the
+virtual environment. If Uvicorn is missing, install the requirements into the
+same Python environment used to start it: `python -m pip install -r
+requirements.txt`.
+
+Open the beginner-friendly prediction page:
 
 ```text
-http://127.0.0.1:8000/docs
+http://127.0.0.1:8000/
 ```
+
+Open the saved model comparison, confusion matrices, and class-level report:
+
+```text
+http://127.0.0.1:8000/results
+```
+
+The page supports single-flow input, batch review, and buttons to generate
+synthetic flow inputs. The generator does not read either dataset: it creates new
+feature values within explicit bounds and applies basic relationships between
+packet counts, byte counts, rates, TCP fields, and application fields. These
+examples are for trying the interface, not a replacement evaluation set. The
+interactive developer API reference remains available at
+`http://127.0.0.1:8000/docs`.
+
+Use the model selector on the home page to choose any trained model. The API
+also accepts `model_name` on `/predict` and `/predict/batch` (for example,
+`/predict?model_name=gradient_boosting`).
+
+Open the interactive research study at `http://127.0.0.1:8000/research/feature-outages`.
+It displays the saved scenario and attack-category comparisons and can start a
+new multi-seed run. The study runner needs the official UNSW-NB15 training and
+testing CSV files available in the configured dataset directory; it can take
+several minutes to finish.
 
 Available endpoints:
 
@@ -327,11 +422,20 @@ Available endpoints:
 | --- | --- | --- |
 | `/health` | GET | Service and model status |
 | `/metadata` | GET | Dataset, model and training metadata exposed by the service |
+| `/models` | GET | List trained models available for prediction |
 | `/predict` | POST | Binary prediction for one network-flow record |
 | `/predict/batch` | POST | Batch predictions with a fixed review budget for the least-certain records |
+| `/results` | GET | Model evaluation results and visual comparisons |
+| `/results/training-data` | GET | Saved training report used by the results page |
+| `/sample-random-input` | GET | Generate one new synthetic flow input |
+| `/sample-random-batch?count=10` | GET | Generate up to 100 synthetic flow inputs |
 | `/metrics` | GET | Prometheus-compatible raw metrics |
 | `/monitoring` | GET | Human-readable monitoring dashboard |
 | `/monitoring/snapshot` | GET | Monitoring state as JSON |
+| `/research/feature-outages` | GET | Interactive feature outage and review study |
+| `/research/feature-outages/results` | GET | Latest saved experiment results |
+| `/research/feature-outages/run` | POST | Start a multi-seed experiment run |
+| `/research/feature-outages/status` | GET | Current experiment status |
 
 If the model artifact is missing or cannot be loaded, the API starts in `degraded`
 mode. In that state, `/health` remains available and `/predict` returns a
@@ -355,6 +459,14 @@ Prediction with the included sample request:
 curl -X POST http://127.0.0.1:8000/predict \
   -H "Content-Type: application/json" \
   --data @reports/sample_prediction_request.json
+```
+
+PowerShell equivalent:
+
+```powershell
+$flow = Get-Content reports/sample_prediction_request.json -Raw | ConvertFrom-Json
+Invoke-RestMethod -Uri http://127.0.0.1:8000/predict -Method Post `
+  -ContentType "application/json" -Body ($flow | ConvertTo-Json -Depth 10)
 ```
 
 Example response:
@@ -414,6 +526,7 @@ docker compose up --build
 Then open:
 
 ```text
+http://127.0.0.1:8000/
 http://127.0.0.1:8000/docs
 http://127.0.0.1:8000/health
 http://127.0.0.1:8000/monitoring
@@ -468,7 +581,7 @@ The current tests cover:
 - repository hygiene, notebook validity and documentation contract checks
 - ML data splitting, leakage prevention and feature grouping
 - preprocessing behavior with unseen categorical values
-- Logistic Regression and Random Forest pipeline smoke tests on synthetic data
+- ensemble-model pipeline smoke tests on synthetic data
 - threshold selection and no-save training smoke workflow
 
 The API tests require `models/model.pkl`. If the model is missing, train the model first.
@@ -493,8 +606,8 @@ models/*.pkl
 
 This keeps the GitHub repository lightweight and reproducible. The model can be regenerated with:
 
-```bash
-python -m src.train --model both --threshold 0.55
+```powershell
+python -m src.train --model all --threshold 0.55
 ```
 
 ## License

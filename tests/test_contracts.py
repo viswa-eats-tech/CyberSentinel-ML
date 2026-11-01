@@ -47,7 +47,8 @@ def test_metadata_feature_contract_matches_api_schema() -> None:
     assert metadata["primary_model_display_name"] == "Random Forest"
     assert metadata["decision_threshold"] == 0.55
     assert metadata["model_thresholds"]["random_forest"] == 0.55
-    assert metadata["model_thresholds"]["logistic_regression"] == 0.55
+    assert metadata["model_thresholds"]["bagging"] == 0.55
+    assert metadata["model_thresholds"]["gradient_boosting"] == 0.55
     assert metadata["excluded_columns"] == ["id", "attack_cat"]
     assert metadata["primary_model_path"] == "models/random_forest_model.pkl"
     assert len(metadata["numeric_features"]) == 39

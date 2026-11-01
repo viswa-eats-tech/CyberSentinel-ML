@@ -8,9 +8,14 @@ from typing import Any
 import joblib
 import pandas as pd
 import sklearn
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import (
+    BaggingClassifier,
+    GradientBoostingClassifier,
+    RandomForestClassifier,
+)
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.utils.class_weight import compute_sample_weight
 
 from src.data_loader import (
     feature_groups,
@@ -24,8 +29,9 @@ from src.preprocessor import build_model_pipeline
 from src.utils import ensure_dir, write_json, write_text
 
 MODEL_BUILDERS = {
-    "logistic_regression": "Logistic Regression",
     "random_forest": "Random Forest",
+    "bagging": "Bagging Classifier",
+    "gradient_boosting": "Gradient Boosting",
 }
 
 
@@ -46,11 +52,7 @@ def main() -> None:
     X_test, y_test = split_features_target(test_data)
     numeric_features, categorical_features = feature_groups(train_data)
 
-    selected_models = (
-        ["logistic_regression", "random_forest"]
-        if args.model == "both"
-        else [args.model]
-    )
+    selected_models = list(MODEL_BUILDERS) if args.model == "all" else [args.model]
 
     output_dir = ensure_dir(args.output_dir)
     reports_dir = ensure_dir(args.reports_dir)
@@ -75,7 +77,6 @@ def main() -> None:
         print(f"Training {MODEL_BUILDERS[model_name]}...")
         model_threshold = args.threshold
         threshold_selection = None
-
         if model_name == "random_forest" and args.auto_threshold:
             model_threshold, threshold_selection = select_threshold_on_validation(
                 model_name=model_name,
@@ -95,9 +96,17 @@ def main() -> None:
             )
 
         pipeline = build_pipeline(
-            model_name, numeric_features, categorical_features, random_state
+            model_name,
+            numeric_features,
+            categorical_features,
+            random_state,
         )
-        pipeline.fit(X_train, y_train)
+        fit_parameters = {}
+        if model_name == "gradient_boosting":
+            fit_parameters["model__sample_weight"] = compute_sample_weight(
+                "balanced", y_train
+            )
+        pipeline.fit(X_train, y_train, **fit_parameters)
 
         metrics = evaluate_classifier(
             pipeline, X_test, y_test, threshold=model_threshold
@@ -146,9 +155,9 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train UNSW-NB15 binary classifiers.")
     parser.add_argument(
         "--model",
-        choices=["logistic_regression", "random_forest", "both"],
-        default="both",
-        help="Model to train. Default: both.",
+        choices=[*MODEL_BUILDERS, "all"],
+        default="all",
+        help="Model to train. 'all' trains Random Forest, Bagging, and Gradient Boosting.",
     )
     parser.add_argument(
         "--dataset-dir",
@@ -320,20 +329,6 @@ def build_pipeline(
     categorical_features: list[str],
     random_state: int,
 ):
-    if model_name == "logistic_regression":
-        model = LogisticRegression(
-            class_weight="balanced",
-            max_iter=1000,
-            random_state=random_state,
-            solver="lbfgs",
-        )
-        return build_model_pipeline(
-            model=model,
-            numeric_features=numeric_features,
-            categorical_features=categorical_features,
-            scale_numeric=True,
-        )
-
     if model_name == "random_forest":
         model = RandomForestClassifier(
             class_weight="balanced_subsample",
@@ -348,6 +343,40 @@ def build_pipeline(
             scale_numeric=False,
         )
 
+    if model_name == "bagging":
+        model = BaggingClassifier(
+            estimator=DecisionTreeClassifier(
+                class_weight="balanced",
+                max_depth=18,
+                min_samples_leaf=2,
+                random_state=random_state,
+            ),
+            n_estimators=25,
+            max_samples=0.8,
+            n_jobs=-1,
+            random_state=random_state,
+        )
+        return build_model_pipeline(
+            model=model,
+            numeric_features=numeric_features,
+            categorical_features=categorical_features,
+            scale_numeric=False,
+        )
+
+    if model_name == "gradient_boosting":
+        model = GradientBoostingClassifier(
+            n_estimators=100,
+            learning_rate=0.08,
+            max_depth=3,
+            subsample=0.8,
+            random_state=random_state,
+        )
+        return build_model_pipeline(
+            model=model,
+            numeric_features=numeric_features,
+            categorical_features=categorical_features,
+            scale_numeric=False,
+        )
     raise ValueError(f"Unsupported model: {model_name}")
 
 
@@ -366,6 +395,14 @@ def build_metadata(
         "primary_model": primary_model_name,
         "primary_model_display_name": MODEL_BUILDERS[primary_model_name],
         "primary_model_path": primary_metrics.get("model_path", "models/model.pkl"),
+        "available_models": {
+            model_name: {
+                "display_name": MODEL_BUILDERS[model_name],
+                "path": metrics["model_path"],
+            }
+            for model_name, metrics in run_results["models"].items()
+            if metrics.get("model_path")
+        },
         "generated_at": run_results["generated_at"],
         "train_rows": run_results["train_rows"],
         "test_rows": run_results["test_rows"],

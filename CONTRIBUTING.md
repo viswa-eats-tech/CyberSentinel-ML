@@ -37,7 +37,7 @@ python -m pytest -q -ra
 For model-related changes, also run a smoke training pass:
 
 ```bash
-python -m src.train --model both --sample-size 5000 --no-save --reports-dir /tmp/netshield-smoke-reports
+python -m src.train --model all --sample-size 5000 --no-save --reports-dir /tmp/netshield-smoke-reports
 ```
 
 ## Contribution Guidelines

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Model evaluation results, confusion matrices, and comparisons for the network intrusion detection project." />
+    <title>Model results | CyberSentinel</title>
+    <link rel="stylesheet" href="/static/results.css?v=2" />
+    <script src="/static/results.js" defer></script>
+  </head>
+  <body>
+    <div class="results-shell">
+      <header class="results-header">
+        <a class="brand" href="/">CyberSentinel / Flow Review</a>
+        <nav aria-label="Results navigation">
+          <a href="/research/feature-outages">Feature outage study</a>
+          <a href="/docs">API documentation</a>
+        </nav>
+      </header>
+      <main>
+        <section class="hero">
+          <p class="eyebrow">MODEL EVALUATION</p>
+          <h1>How did the models perform?</h1>
+          <p class="lead">Compare the saved ensemble-model evaluations on the official test split. Each model uses the same decision threshold, so you can compare its mistakes as well as its scores.</p>
+          <p id="generated-at" class="muted">Loading the saved report…</p>
+        </section>
+
+        <section id="load-error" class="card error-card" hidden></section>
+        <div id="results-content" hidden>
+          <section id="run-summary" class="summary-grid"></section>
+
+          <section class="card">
+            <div class="section-heading">
+              <div><p class="eyebrow">SIDE-BY-SIDE</p><h2>Key metric comparison</h2></div>
+              <div class="legend" id="model-legend"></div>
+            </div>
+            <p class="muted explanation">Higher bars are better for these scores. Attack precision answers “when it flags an attack, how often is it right?” Attack recall answers “of all attacks, how many did it catch?”</p>
+            <div id="metric-chart" class="metric-chart"></div>
+          </section>
+
+          <section class="card">
+            <div class="section-heading"><div><p class="eyebrow">ERROR TRADE-OFF</p><h2>False alarms and missed attacks</h2></div></div>
+            <p class="muted explanation">False positives are normal flows flagged as attacks. False negatives are attacks labeled normal. Which matters more depends on the intended use.</p>
+            <div id="error-chart" class="error-chart"></div>
+          </section>
+
+          <section>
+            <div class="section-heading"><div><p class="eyebrow">CONFUSION MATRICES</p><h2>Exactly what each model got right and wrong</h2></div></div>
+            <div id="confusion-matrices" class="model-grid"></div>
+          </section>
+
+          <section>
+            <div class="section-heading"><div><p class="eyebrow">FULL CLASSIFICATION REPORT</p><h2>Metrics for each class</h2></div></div>
+            <div id="classification-reports" class="model-grid"></div>
+          </section>
+
+          <section class="card note-card">
+            <h2>Reading these results</h2>
+            <p class="muted">These numbers describe this saved run on the supplied test split. They are not a guarantee of performance on new networks. A high attack recall can come with more false alarms, so compare both error counts before choosing a threshold or model.</p>
+            <a href="/research/feature-outages">See the feature outage and review-budget study →</a>
+          </section>
+        </div>
+      </main>
+      <footer>For learning and research. Not a production security control.</footer>
+    </div>
+  </body>
+</html>

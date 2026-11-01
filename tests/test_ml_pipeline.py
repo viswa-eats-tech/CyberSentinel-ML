@@ -103,24 +103,6 @@ def test_preprocessor_handles_unseen_categorical_values() -> None:
     assert transformed.shape[1] >= len(numeric_features)
 
 
-def test_logistic_regression_pipeline_smoke_fit_predicts_probabilities() -> None:
-    data = make_synthetic_flow_frame(30)
-    features, target = split_features_target(data)
-    numeric_features, categorical_features = feature_groups(data)
-    pipeline = build_pipeline(
-        "logistic_regression",
-        numeric_features=numeric_features,
-        categorical_features=categorical_features,
-        random_state=42,
-    )
-
-    pipeline.fit(features, target)
-    probabilities = pipeline.predict_proba(features.head(5))
-
-    assert probabilities.shape == (5, 2)
-    assert ((probabilities >= 0) & (probabilities <= 1)).all()
-
-
 def test_random_forest_pipeline_smoke_evaluates_with_threshold() -> None:
     data = make_synthetic_flow_frame(32)
     features, target = split_features_target(data)
@@ -206,7 +188,7 @@ def test_training_script_smoke_uses_synthetic_csvs_without_saving_models(
             "--reports-dir",
             str(reports_dir),
             "--model",
-            "logistic_regression",
+            "random_forest",
             "--threshold",
             "0.55",
             "--no-save",
@@ -219,7 +201,7 @@ def test_training_script_smoke_uses_synthetic_csvs_without_saving_models(
     assert results["train_rows"] == 30
     assert results["test_rows"] == 16
     assert results["decision_threshold"] == 0.55
-    assert set(results["models"]) == {"logistic_regression"}
+    assert set(results["models"]) == {"random_forest"}
     assert (reports_dir / "training_results.md").exists()
     assert not any(output_dir.glob("*.pkl"))
     assert not (output_dir / "metadata.json").exists()

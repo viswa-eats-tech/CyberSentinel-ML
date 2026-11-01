@@ -22,3 +22,5 @@ data/processed/
 notebooks/
 reports/*
 !reports/sample_prediction_request.json
+!reports/sample_batch_records.json
+!reports/sample_batch_prediction_request.json

@@ -1,8 +1,8 @@
 # Responsible Use
 
-This project is intended for educational, research and defensive security learning purposes.
+This project is intended for educational, research, and defensive security learning purposes.
 
-It demonstrates an end-to-end machine learning workflow for binary intrusion detection on the UNSW-NB15 dataset. It does not provide a complete production intrusion detection system.
+It demonstrates a machine-learning workflow for binary intrusion detection on UNSW-NB15. It is not a complete production intrusion detection system.
 
 ## Appropriate Use
 

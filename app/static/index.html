@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A beginner-friendly interface for exploring network flow predictions."
+    />
+    <title>CyberSentinel | Flow Review</title>
+    <link rel="stylesheet" href="/static/styles.css?v=4" />
+    <script src="/static/app.js?v=4" defer></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="CyberSentinel home">
+          <span class="brand-mark" aria-hidden="true">CS</span>
+          <span>CYBERSENTINEL<span class="brand-light"> / FLOW REVIEW</span></span>
+        </a>
+        <nav class="top-links" aria-label="Helpful links">
+          <span id="service-status" class="service-status status-loading">
+            <span class="status-dot"></span>Checking model…
+          </span>
+          <a href="/monitoring">Monitoring</a>
+          <a href="/results">Model results</a>
+          <a href="/research/feature-outages">Feature outage study</a>
+          <a href="/docs">API docs</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="intro">
+          <div class="intro-copy">
+            <p class="eyebrow">NETWORK TRAFFIC · UNSW-NB15</p>
+            <h1>Review a network flow</h1>
+            <p class="intro-text">
+              Enter one flow or a batch. The classifier will mark each record
+              as normal traffic or a possible attack.
+            </p>
+          </div>
+        </section>
+
+        <div class="mode-switch" role="tablist" aria-label="Prediction mode">
+          <button class="mode-button active" id="single-mode" type="button" role="tab" aria-selected="true">
+            One flow
+          </button>
+          <button class="mode-button" id="batch-mode" type="button" role="tab" aria-selected="false">
+            Batch review
+          </button>
+        </div>
+
+        <div class="model-picker">
+          <label for="model-choice">Classifier</label>
+          <select id="model-choice" aria-describedby="model-choice-help">
+            <option value="random_forest">Loading trained models…</option>
+          </select>
+          <span id="model-choice-help" class="form-hint">Models are loaded when you select them.</span>
+        </div>
+
+        <div class="workspace">
+          <section class="panel input-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">INPUT</p>
+                <h2 id="input-title">Flow details</h2>
+                <p id="input-description" class="muted">
+                  The example is preloaded. You can change any value before checking it.
+                </p>
+              </div>
+              <div class="panel-actions">
+                <button class="button button-subtle" id="generate-random-flow" type="button">
+                  Generate random flow
+                </button>
+                <button class="button button-subtle" id="load-example" type="button">
+                  Load example
+                </button>
+              </div>
+            </div>
+
+            <div id="single-view">
+              <form id="flow-form">
+                <div id="flow-fields" class="field-groups" aria-live="polite"></div>
+                <details class="quick-json">
+                  <summary>Already have a flow as JSON? Paste it here</summary>
+                  <label class="field-label" for="single-json">One flow record</label>
+                  <textarea id="single-json" class="json-input" rows="8" spellcheck="false"></textarea>
+                  <div class="input-meta">The object needs the same 42 fields used by the form.</div>
+                  <button class="button button-subtle" id="apply-single-json" type="button">Use these values</button>
+                </details>
+                <div class="form-actions">
+                  <button class="button button-primary" type="submit">
+                    Check this flow <span aria-hidden="true">→</span>
+                  </button>
+                  <span class="form-hint">All fields are needed for a single-flow check.</span>
+                </div>
+              </form>
+            </div>
+
+            <div id="batch-view" hidden>
+              <label class="field-label" for="batch-records">
+                Flow records <span class="field-help">Paste a JSON array of flow objects.</span>
+              </label>
+              <textarea
+                id="batch-records"
+                class="json-input"
+                rows="12"
+                spellcheck="false"
+                placeholder='[{"dur": 0.01, "proto": "tcp", ...}]'
+                aria-describedby="batch-input-help"
+              ></textarea>
+              <div class="input-meta" id="batch-input-help">
+                Use the same 42 fields as the “One flow” form. Some values can be
+                missing; the model will fill them in and list them in the result.
+                At a 10% budget, use at least 10 records to send one or more for review.
+              </div>
+              <div class="batch-options">
+                <label class="budget-control" for="review-budget">
+                  <span>Send for review</span>
+                  <select id="review-budget">
+                    <option value="0.05">5% of the batch</option>
+                    <option value="0.10" selected>10% of the batch</option>
+                    <option value="0.20">20% of the batch</option>
+                    <option value="0.30">30% of the batch</option>
+                  </select>
+                </label>
+                <span class="form-hint">The least certain flows are selected.</span>
+              </div>
+              <div class="form-actions">
+                <button class="button button-primary" id="check-batch" type="button">
+                  Review this batch <span aria-hidden="true">→</span>
+                </button>
+                <button class="button button-subtle" id="load-demo-batch" type="button">
+                  Load 10 different flows
+                </button>
+                <button class="button button-subtle" id="generate-random-batch" type="button">
+                  Generate 10 random flows
+                </button>
+              </div>
+              <div class="input-meta">Generated examples are new synthetic flows with bounded values and basic feature relationships. They are for trying the interface, not measuring model performance.</div>
+            </div>
+
+            <div id="error-box" class="error-box" role="alert" hidden></div>
+          </section>
+
+          <section class="panel result-panel" aria-live="polite" aria-atomic="false">
+            <div class="result-heading">
+              <p class="eyebrow">RESULT</p>
+              <h2>Your result will appear here</h2>
+              <p class="muted">Submit a flow to see a plain-language summary.</p>
+            </div>
+            <div id="result-content" class="result-content">
+              <div class="empty-state" aria-hidden="true">
+                <div class="empty-icon">↗</div>
+                <span>Waiting for a flow</span>
+              </div>
+            </div>
+            <div class="result-footnote">
+              Attack score is the model’s output score. It should not be read as a calibrated real-world probability.
+            </div>
+          </section>
+        </div>
+
+        <section class="how-it-works">
+          <p class="eyebrow">HOW TO READ THIS</p>
+          <div class="how-grid">
+            <article>
+              <span class="step-number">01</span>
+              <h3>Give it flow details</h3>
+              <p>Start with the preloaded example, or replace it with a record that uses the same fields.</p>
+            </article>
+            <article>
+              <span class="step-number">02</span>
+              <h3>Read the score and label</h3>
+              <p>The model compares its attack score with the decision threshold shown in the result.</p>
+            </article>
+            <article>
+              <span class="step-number">03</span>
+              <h3>Review uncertain flows</h3>
+              <p>Batch mode routes the least certain records to a review queue with a fixed size.</p>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>For learning and research. Not a production security control.</span>
+        <a href="/docs">Developer API documentation</a>
+      </footer>
+    </div>
+  </body>
+</html>

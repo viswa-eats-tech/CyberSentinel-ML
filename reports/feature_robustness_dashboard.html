@@ -15,115 +15,128 @@ th, td { text-align: left; border-bottom: 1px solid #e5e9ef; padding: 10px; }
 th { background: #f8fafc; }
 </style></head><body><main>
 <h1>Feature outage and alert triage</h1>
-<p class="muted">Generated 2026-10-31T11:36:07.067640+00:00. Target review budget: 10.0%. 
-Official test rows: 82332. Outage scenarios are simulated by replacing
-all values in a feature group with missing values.</p>
+<p class="muted">Generated 2026-11-01T13:25:07.950054+00:00. Review budget: 10.0%; random baseline:
+200 same-size draws per scenario and seed. Test rows: 82332; training
+seeds: 5. Outages replace all values in
+one feature group with missing values. Seed-level sign tests are paired; q-values
+use Benjamini-Hochberg across scenario and category comparisons.</p>
 <section><h2>Scenario summary</h2><div class="table-wrap"><table>
-<thead><tr><th>Scenario</th><th>Review rate</th><th>Automatic coverage</th>
-<th>Baseline accuracy</th><th>Automatic accuracy</th>
-<th>Baseline errors caught</th><th>Attack recall</th></tr></thead>
-<tbody><tr><td>clean</td><td>10.0%</td><td>90.0%</td><td>88.1%</td><td>92.1%</td><td>40.0%</td><td>95.7%</td></tr>
-<tr><td>protocol_context</td><td>10.0%</td><td>90.0%</td><td>85.9%</td><td>89.8%</td><td>34.7%</td><td>94.5%</td></tr>
-<tr><td>packet_counts</td><td>10.0%</td><td>90.0%</td><td>87.4%</td><td>91.4%</td><td>38.0%</td><td>96.3%</td></tr>
-<tr><td>byte_volume</td><td>10.0%</td><td>90.0%</td><td>83.1%</td><td>88.2%</td><td>37.0%</td><td>96.8%</td></tr>
-<tr><td>timing</td><td>10.0%</td><td>90.0%</td><td>83.8%</td><td>88.7%</td><td>37.1%</td><td>95.6%</td></tr>
-<tr><td>ttl_state</td><td>10.0%</td><td>90.0%</td><td>88.7%</td><td>90.7%</td><td>26.1%</td><td>95.5%</td></tr>
-<tr><td>tcp</td><td>10.0%</td><td>90.0%</td><td>80.0%</td><td>86.2%</td><td>37.7%</td><td>96.8%</td></tr>
-<tr><td>connection_counts</td><td>10.0%</td><td>90.0%</td><td>88.0%</td><td>91.8%</td><td>39.0%</td><td>93.4%</td></tr>
-<tr><td>application</td><td>10.0%</td><td>90.0%</td><td>88.4%</td><td>92.3%</td><td>40.5%</td><td>95.6%</td></tr>
-<tr><td>packet_loss</td><td>10.0%</td><td>90.0%</td><td>86.4%</td><td>90.7%</td><td>38.5%</td><td>96.8%</td></tr></tbody></table></div></section>
+<thead><tr><th>Scenario</th><th>Review rate</th><th>Baseline errors</th>
+<th>Uncertainty errors caught</th><th>Random mean</th><th>Lift (#)</th>
+<th>Seeds ahead</th><th>Adjusted q</th></tr></thead>
+<tbody><tr><td>clean</td><td>10.0%</td><td>9759.0</td><td>3891.8</td><td>976.0</td><td>+2915.8</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>protocol_context</td><td>10.0%</td><td>11478.8</td><td>4410.6</td><td>1147.2</td><td>+3263.4</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_counts</td><td>10.0%</td><td>10653.6</td><td>4058.2</td><td>1064.3</td><td>+2993.9</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>byte_volume</td><td>10.0%</td><td>14807.0</td><td>5811.2</td><td>1480.4</td><td>+4330.8</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>timing</td><td>10.0%</td><td>13841.4</td><td>5279.6</td><td>1382.2</td><td>+3897.4</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>ttl_state</td><td>10.0%</td><td>13157.6</td><td>4107.6</td><td>1316.6</td><td>+2791.0</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>tcp</td><td>10.0%</td><td>14870.0</td><td>5003.2</td><td>1485.1</td><td>+3518.1</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>10.0%</td><td>9934.2</td><td>3853.0</td><td>994.2</td><td>+2858.8</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>application</td><td>10.0%</td><td>9567.4</td><td>3871.4</td><td>957.4</td><td>+2914.0</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_loss</td><td>10.0%</td><td>11048.2</td><td>4234.6</td><td>1105.1</td><td>+3129.5</td><td>5/5</td><td>9.5%</td></tr></tbody></table></div></section>
 <section><h2>Attack category results</h2>
 <div class="table-wrap"><table><thead><tr>
-<th>Scenario</th><th>Category</th><th>Rows</th><th>Review rate</th>
-<th>Attack recall</th><th>Attacks reviewed</th>
-</tr></thead><tbody><tr><td>clean</td><td>Analysis</td><td>677</td><td>2.5%</td><td>97.5%</td><td>17</td></tr>
-<tr><td>clean</td><td>Backdoor</td><td>583</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>clean</td><td>DoS</td><td>4089</td><td>0.3%</td><td>99.7%</td><td>12</td></tr>
-<tr><td>clean</td><td>Exploits</td><td>11132</td><td>1.1%</td><td>98.7%</td><td>121</td></tr>
-<tr><td>clean</td><td>Fuzzers</td><td>6062</td><td>24.6%</td><td>71.3%</td><td>1491</td></tr>
-<tr><td>clean</td><td>Generic</td><td>18871</td><td>0.0%</td><td>100.0%</td><td>6</td></tr>
-<tr><td>clean</td><td>Reconnaissance</td><td>3496</td><td>0.3%</td><td>99.7%</td><td>11</td></tr>
-<tr><td>clean</td><td>Shellcode</td><td>378</td><td>2.4%</td><td>97.4%</td><td>9</td></tr>
-<tr><td>clean</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr>
-<tr><td>protocol_context</td><td>Analysis</td><td>677</td><td>0.9%</td><td>99.1%</td><td>6</td></tr>
-<tr><td>protocol_context</td><td>Backdoor</td><td>583</td><td>0.2%</td><td>99.8%</td><td>1</td></tr>
-<tr><td>protocol_context</td><td>DoS</td><td>4089</td><td>0.8%</td><td>99.1%</td><td>31</td></tr>
-<tr><td>protocol_context</td><td>Exploits</td><td>11132</td><td>0.8%</td><td>99.1%</td><td>88</td></tr>
-<tr><td>protocol_context</td><td>Fuzzers</td><td>6062</td><td>18.7%</td><td>78.1%</td><td>1132</td></tr>
-<tr><td>protocol_context</td><td>Generic</td><td>18871</td><td>5.4%</td><td>94.6%</td><td>1015</td></tr>
-<tr><td>protocol_context</td><td>Reconnaissance</td><td>3496</td><td>0.4%</td><td>99.6%</td><td>14</td></tr>
-<tr><td>protocol_context</td><td>Shellcode</td><td>378</td><td>1.1%</td><td>98.7%</td><td>4</td></tr>
-<tr><td>protocol_context</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr>
-<tr><td>packet_counts</td><td>Analysis</td><td>677</td><td>1.5%</td><td>98.5%</td><td>10</td></tr>
-<tr><td>packet_counts</td><td>Backdoor</td><td>583</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>packet_counts</td><td>DoS</td><td>4089</td><td>0.3%</td><td>99.7%</td><td>13</td></tr>
-<tr><td>packet_counts</td><td>Exploits</td><td>11132</td><td>0.9%</td><td>99.0%</td><td>99</td></tr>
-<tr><td>packet_counts</td><td>Fuzzers</td><td>6062</td><td>22.2%</td><td>74.7%</td><td>1345</td></tr>
-<tr><td>packet_counts</td><td>Generic</td><td>18871</td><td>0.0%</td><td>100.0%</td><td>5</td></tr>
-<tr><td>packet_counts</td><td>Reconnaissance</td><td>3496</td><td>0.5%</td><td>99.5%</td><td>17</td></tr>
-<tr><td>packet_counts</td><td>Shellcode</td><td>378</td><td>2.1%</td><td>97.6%</td><td>8</td></tr>
-<tr><td>packet_counts</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr>
-<tr><td>byte_volume</td><td>Analysis</td><td>677</td><td>1.5%</td><td>98.5%</td><td>10</td></tr>
-<tr><td>byte_volume</td><td>Backdoor</td><td>583</td><td>0.2%</td><td>99.8%</td><td>1</td></tr>
-<tr><td>byte_volume</td><td>DoS</td><td>4089</td><td>0.1%</td><td>99.9%</td><td>5</td></tr>
-<tr><td>byte_volume</td><td>Exploits</td><td>11132</td><td>0.6%</td><td>99.4%</td><td>72</td></tr>
-<tr><td>byte_volume</td><td>Fuzzers</td><td>6062</td><td>21.2%</td><td>78.5%</td><td>1288</td></tr>
-<tr><td>byte_volume</td><td>Generic</td><td>18871</td><td>0.0%</td><td>100.0%</td><td>6</td></tr>
-<tr><td>byte_volume</td><td>Reconnaissance</td><td>3496</td><td>1.0%</td><td>98.9%</td><td>36</td></tr>
-<tr><td>byte_volume</td><td>Shellcode</td><td>378</td><td>1.9%</td><td>98.1%</td><td>7</td></tr>
-<tr><td>byte_volume</td><td>Worms</td><td>44</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>timing</td><td>Analysis</td><td>677</td><td>0.9%</td><td>99.0%</td><td>6</td></tr>
-<tr><td>timing</td><td>Backdoor</td><td>583</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>timing</td><td>DoS</td><td>4089</td><td>0.5%</td><td>99.5%</td><td>21</td></tr>
-<tr><td>timing</td><td>Exploits</td><td>11132</td><td>1.0%</td><td>98.9%</td><td>115</td></tr>
-<tr><td>timing</td><td>Fuzzers</td><td>6062</td><td>26.7%</td><td>70.7%</td><td>1618</td></tr>
-<tr><td>timing</td><td>Generic</td><td>18871</td><td>0.1%</td><td>99.9%</td><td>12</td></tr>
-<tr><td>timing</td><td>Reconnaissance</td><td>3496</td><td>1.1%</td><td>98.9%</td><td>38</td></tr>
-<tr><td>timing</td><td>Shellcode</td><td>378</td><td>2.1%</td><td>97.9%</td><td>8</td></tr>
-<tr><td>timing</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr>
-<tr><td>ttl_state</td><td>Analysis</td><td>677</td><td>3.4%</td><td>96.6%</td><td>23</td></tr>
-<tr><td>ttl_state</td><td>Backdoor</td><td>583</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>ttl_state</td><td>DoS</td><td>4089</td><td>0.4%</td><td>99.5%</td><td>17</td></tr>
-<tr><td>ttl_state</td><td>Exploits</td><td>11132</td><td>1.1%</td><td>98.3%</td><td>120</td></tr>
-<tr><td>ttl_state</td><td>Fuzzers</td><td>6062</td><td>15.8%</td><td>71.0%</td><td>959</td></tr>
-<tr><td>ttl_state</td><td>Generic</td><td>18871</td><td>0.0%</td><td>100.0%</td><td>5</td></tr>
-<tr><td>ttl_state</td><td>Reconnaissance</td><td>3496</td><td>0.3%</td><td>99.6%</td><td>11</td></tr>
-<tr><td>ttl_state</td><td>Shellcode</td><td>378</td><td>1.3%</td><td>97.4%</td><td>5</td></tr>
-<tr><td>ttl_state</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr>
-<tr><td>tcp</td><td>Analysis</td><td>677</td><td>1.5%</td><td>98.5%</td><td>10</td></tr>
-<tr><td>tcp</td><td>Backdoor</td><td>583</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>tcp</td><td>DoS</td><td>4089</td><td>0.8%</td><td>99.2%</td><td>33</td></tr>
-<tr><td>tcp</td><td>Exploits</td><td>11132</td><td>1.6%</td><td>98.4%</td><td>174</td></tr>
-<tr><td>tcp</td><td>Fuzzers</td><td>6062</td><td>18.8%</td><td>80.0%</td><td>1140</td></tr>
-<tr><td>tcp</td><td>Generic</td><td>18871</td><td>0.1%</td><td>99.9%</td><td>11</td></tr>
-<tr><td>tcp</td><td>Reconnaissance</td><td>3496</td><td>0.6%</td><td>99.4%</td><td>20</td></tr>
-<tr><td>tcp</td><td>Shellcode</td><td>378</td><td>1.3%</td><td>98.7%</td><td>5</td></tr>
-<tr><td>tcp</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr>
-<tr><td>connection_counts</td><td>Analysis</td><td>677</td><td>7.7%</td><td>92.3%</td><td>52</td></tr>
-<tr><td>connection_counts</td><td>Backdoor</td><td>583</td><td>0.9%</td><td>99.0%</td><td>5</td></tr>
-<tr><td>connection_counts</td><td>DoS</td><td>4089</td><td>3.5%</td><td>95.7%</td><td>144</td></tr>
-<tr><td>connection_counts</td><td>Exploits</td><td>11132</td><td>4.6%</td><td>94.1%</td><td>517</td></tr>
-<tr><td>connection_counts</td><td>Fuzzers</td><td>6062</td><td>23.0%</td><td>69.7%</td><td>1396</td></tr>
-<tr><td>connection_counts</td><td>Generic</td><td>18871</td><td>0.3%</td><td>99.7%</td><td>52</td></tr>
-<tr><td>connection_counts</td><td>Reconnaissance</td><td>3496</td><td>2.7%</td><td>97.2%</td><td>93</td></tr>
-<tr><td>connection_counts</td><td>Shellcode</td><td>378</td><td>19.6%</td><td>75.9%</td><td>74</td></tr>
-<tr><td>connection_counts</td><td>Worms</td><td>44</td><td>6.8%</td><td>93.2%</td><td>3</td></tr>
-<tr><td>application</td><td>Analysis</td><td>677</td><td>2.5%</td><td>97.5%</td><td>17</td></tr>
-<tr><td>application</td><td>Backdoor</td><td>583</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>application</td><td>DoS</td><td>4089</td><td>0.5%</td><td>99.5%</td><td>19</td></tr>
-<tr><td>application</td><td>Exploits</td><td>11132</td><td>1.4%</td><td>98.4%</td><td>158</td></tr>
-<tr><td>application</td><td>Fuzzers</td><td>6062</td><td>24.4%</td><td>71.5%</td><td>1481</td></tr>
-<tr><td>application</td><td>Generic</td><td>18871</td><td>0.0%</td><td>100.0%</td><td>6</td></tr>
-<tr><td>application</td><td>Reconnaissance</td><td>3496</td><td>0.3%</td><td>99.6%</td><td>12</td></tr>
-<tr><td>application</td><td>Shellcode</td><td>378</td><td>2.4%</td><td>97.4%</td><td>9</td></tr>
-<tr><td>application</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr>
-<tr><td>packet_loss</td><td>Analysis</td><td>677</td><td>1.6%</td><td>98.4%</td><td>11</td></tr>
-<tr><td>packet_loss</td><td>Backdoor</td><td>583</td><td>0.0%</td><td>100.0%</td><td>0</td></tr>
-<tr><td>packet_loss</td><td>DoS</td><td>4089</td><td>0.2%</td><td>99.8%</td><td>9</td></tr>
-<tr><td>packet_loss</td><td>Exploits</td><td>11132</td><td>0.8%</td><td>99.1%</td><td>90</td></tr>
-<tr><td>packet_loss</td><td>Fuzzers</td><td>6062</td><td>19.1%</td><td>78.6%</td><td>1160</td></tr>
-<tr><td>packet_loss</td><td>Generic</td><td>18871</td><td>0.0%</td><td>100.0%</td><td>2</td></tr>
-<tr><td>packet_loss</td><td>Reconnaissance</td><td>3496</td><td>0.2%</td><td>99.8%</td><td>8</td></tr>
-<tr><td>packet_loss</td><td>Shellcode</td><td>378</td><td>1.9%</td><td>98.1%</td><td>7</td></tr>
-<tr><td>packet_loss</td><td>Worms</td><td>44</td><td>2.3%</td><td>97.7%</td><td>1</td></tr></tbody></table></div></section>
+<th>Scenario</th><th>Category</th><th>Rows</th><th>Baseline errors</th>
+<th>Errors caught by uncertainty</th><th>Random mean</th><th>Lift</th>
+<th>Category error capture</th><th>Seeds ahead</th><th>Adjusted q</th>
+</tr></thead><tbody><tr><td>clean</td><td>Analysis</td><td>677.0</td><td>0.6</td><td>0.6</td><td>0.07</td><td>+0.53</td><td>100.0%</td><td>2/5</td><td>58.0%</td></tr>
+<tr><td>clean</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>clean</td><td>DoS</td><td>4089.0</td><td>5.0</td><td>3.6</td><td>0.53</td><td>+3.07</td><td>72.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>clean</td><td>Exploits</td><td>11132.0</td><td>56.8</td><td>34.2</td><td>5.56</td><td>+28.64</td><td>60.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>clean</td><td>Fuzzers</td><td>6062.0</td><td>753.6</td><td>493.6</td><td>75.00</td><td>+418.60</td><td>65.5%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>clean</td><td>Generic</td><td>18871.0</td><td>0.6</td><td>0.6</td><td>0.06</td><td>+0.54</td><td>100.0%</td><td>3/5</td><td>33.1%</td></tr>
+<tr><td>clean</td><td>Normal</td><td>37000.0</td><td>8936.4</td><td>3354.8</td><td>894.16</td><td>+2460.64</td><td>37.5%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>clean</td><td>Reconnaissance</td><td>3496.0</td><td>2.8</td><td>2.6</td><td>0.26</td><td>+2.34</td><td>92.9%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>clean</td><td>Shellcode</td><td>378.0</td><td>3.2</td><td>1.8</td><td>0.32</td><td>+1.48</td><td>56.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>clean</td><td>Worms</td><td>44.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>protocol_context</td><td>Analysis</td><td>677.0</td><td>0.6</td><td>0.6</td><td>0.06</td><td>+0.54</td><td>100.0%</td><td>2/5</td><td>58.0%</td></tr>
+<tr><td>protocol_context</td><td>Backdoor</td><td>583.0</td><td>0.2</td><td>0.2</td><td>0.02</td><td>+0.18</td><td>100.0%</td><td>1/5</td><td>100.0%</td></tr>
+<tr><td>protocol_context</td><td>DoS</td><td>4089.0</td><td>14.2</td><td>10.8</td><td>1.44</td><td>+9.36</td><td>76.1%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>protocol_context</td><td>Exploits</td><td>11132.0</td><td>39.0</td><td>24.4</td><td>4.04</td><td>+20.36</td><td>62.6%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>protocol_context</td><td>Fuzzers</td><td>6062.0</td><td>561.0</td><td>387.2</td><td>56.32</td><td>+330.88</td><td>69.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>protocol_context</td><td>Generic</td><td>18871.0</td><td>4.8</td><td>4.8</td><td>0.46</td><td>+4.34</td><td>100.0%</td><td>3/5</td><td>33.1%</td></tr>
+<tr><td>protocol_context</td><td>Normal</td><td>37000.0</td><td>10852.8</td><td>3978.2</td><td>1084.22</td><td>+2893.98</td><td>36.7%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>protocol_context</td><td>Reconnaissance</td><td>3496.0</td><td>3.8</td><td>3.0</td><td>0.41</td><td>+2.59</td><td>78.9%</td><td>4/5</td><td>47.0%</td></tr>
+<tr><td>protocol_context</td><td>Shellcode</td><td>378.0</td><td>2.2</td><td>1.2</td><td>0.20</td><td>+1.00</td><td>54.5%</td><td>3/5</td><td>100.0%</td></tr>
+<tr><td>protocol_context</td><td>Worms</td><td>44.0</td><td>0.2</td><td>0.2</td><td>0.02</td><td>+0.18</td><td>100.0%</td><td>1/5</td><td>100.0%</td></tr>
+<tr><td>packet_counts</td><td>Analysis</td><td>677.0</td><td>1.0</td><td>1.0</td><td>0.10</td><td>+0.90</td><td>100.0%</td><td>3/5</td><td>33.1%</td></tr>
+<tr><td>packet_counts</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>packet_counts</td><td>DoS</td><td>4089.0</td><td>5.0</td><td>4.0</td><td>0.49</td><td>+3.51</td><td>80.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_counts</td><td>Exploits</td><td>11132.0</td><td>39.0</td><td>27.4</td><td>3.93</td><td>+23.47</td><td>70.3%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_counts</td><td>Fuzzers</td><td>6062.0</td><td>609.8</td><td>397.4</td><td>60.80</td><td>+336.60</td><td>65.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_counts</td><td>Generic</td><td>18871.0</td><td>0.4</td><td>0.4</td><td>0.04</td><td>+0.36</td><td>100.0%</td><td>2/5</td><td>58.0%</td></tr>
+<tr><td>packet_counts</td><td>Normal</td><td>37000.0</td><td>9992.8</td><td>3624.2</td><td>998.38</td><td>+2625.82</td><td>36.3%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_counts</td><td>Reconnaissance</td><td>3496.0</td><td>2.6</td><td>2.2</td><td>0.24</td><td>+1.96</td><td>84.6%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_counts</td><td>Shellcode</td><td>378.0</td><td>2.8</td><td>1.4</td><td>0.27</td><td>+1.13</td><td>50.0%</td><td>4/5</td><td>47.0%</td></tr>
+<tr><td>packet_counts</td><td>Worms</td><td>44.0</td><td>0.2</td><td>0.2</td><td>0.02</td><td>+0.18</td><td>100.0%</td><td>1/5</td><td>100.0%</td></tr>
+<tr><td>byte_volume</td><td>Analysis</td><td>677.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>byte_volume</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>byte_volume</td><td>DoS</td><td>4089.0</td><td>0.6</td><td>0.6</td><td>0.06</td><td>+0.54</td><td>100.0%</td><td>3/5</td><td>33.1%</td></tr>
+<tr><td>byte_volume</td><td>Exploits</td><td>11132.0</td><td>3.2</td><td>3.2</td><td>0.36</td><td>+2.84</td><td>100.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>byte_volume</td><td>Fuzzers</td><td>6062.0</td><td>183.2</td><td>181.0</td><td>18.32</td><td>+162.68</td><td>98.8%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>byte_volume</td><td>Generic</td><td>18871.0</td><td>0.2</td><td>0.2</td><td>0.02</td><td>+0.18</td><td>100.0%</td><td>1/5</td><td>100.0%</td></tr>
+<tr><td>byte_volume</td><td>Normal</td><td>37000.0</td><td>14616.6</td><td>5623.4</td><td>1461.26</td><td>+4162.14</td><td>38.5%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>byte_volume</td><td>Reconnaissance</td><td>3496.0</td><td>1.8</td><td>1.4</td><td>0.17</td><td>+1.23</td><td>77.8%</td><td>4/5</td><td>47.0%</td></tr>
+<tr><td>byte_volume</td><td>Shellcode</td><td>378.0</td><td>1.4</td><td>1.4</td><td>0.16</td><td>+1.24</td><td>100.0%</td><td>4/5</td><td>18.4%</td></tr>
+<tr><td>byte_volume</td><td>Worms</td><td>44.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>timing</td><td>Analysis</td><td>677.0</td><td>0.6</td><td>0.4</td><td>0.06</td><td>+0.34</td><td>66.7%</td><td>2/5</td><td>100.0%</td></tr>
+<tr><td>timing</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>timing</td><td>DoS</td><td>4089.0</td><td>1.8</td><td>0.8</td><td>0.20</td><td>+0.60</td><td>44.4%</td><td>3/5</td><td>100.0%</td></tr>
+<tr><td>timing</td><td>Exploits</td><td>11132.0</td><td>11.6</td><td>9.8</td><td>1.16</td><td>+8.64</td><td>84.5%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>timing</td><td>Fuzzers</td><td>6062.0</td><td>567.4</td><td>401.8</td><td>56.84</td><td>+344.96</td><td>70.8%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>timing</td><td>Generic</td><td>18871.0</td><td>0.8</td><td>0.8</td><td>0.07</td><td>+0.73</td><td>100.0%</td><td>2/5</td><td>58.0%</td></tr>
+<tr><td>timing</td><td>Normal</td><td>37000.0</td><td>13253.6</td><td>4861.4</td><td>1323.28</td><td>+3538.12</td><td>36.7%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>timing</td><td>Reconnaissance</td><td>3496.0</td><td>3.8</td><td>3.4</td><td>0.39</td><td>+3.01</td><td>89.5%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>timing</td><td>Shellcode</td><td>378.0</td><td>1.4</td><td>1.0</td><td>0.13</td><td>+0.87</td><td>71.4%</td><td>3/5</td><td>71.6%</td></tr>
+<tr><td>timing</td><td>Worms</td><td>44.0</td><td>0.4</td><td>0.2</td><td>0.05</td><td>+0.15</td><td>50.0%</td><td>1/5</td><td>100.0%</td></tr>
+<tr><td>ttl_state</td><td>Analysis</td><td>677.0</td><td>5.2</td><td>3.8</td><td>0.55</td><td>+3.25</td><td>73.1%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>ttl_state</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>ttl_state</td><td>DoS</td><td>4089.0</td><td>9.0</td><td>3.8</td><td>0.91</td><td>+2.89</td><td>42.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>ttl_state</td><td>Exploits</td><td>11132.0</td><td>99.8</td><td>30.0</td><td>9.84</td><td>+20.16</td><td>30.1%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>ttl_state</td><td>Fuzzers</td><td>6062.0</td><td>1310.2</td><td>293.6</td><td>130.79</td><td>+162.81</td><td>22.4%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>ttl_state</td><td>Generic</td><td>18871.0</td><td>2.4</td><td>1.4</td><td>0.24</td><td>+1.16</td><td>58.3%</td><td>3/5</td><td>100.0%</td></tr>
+<tr><td>ttl_state</td><td>Normal</td><td>37000.0</td><td>11717.6</td><td>3770.2</td><td>1172.89</td><td>+2597.31</td><td>32.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>ttl_state</td><td>Reconnaissance</td><td>3496.0</td><td>6.4</td><td>2.6</td><td>0.65</td><td>+1.96</td><td>40.6%</td><td>4/5</td><td>47.0%</td></tr>
+<tr><td>ttl_state</td><td>Shellcode</td><td>378.0</td><td>6.8</td><td>2.0</td><td>0.69</td><td>+1.31</td><td>29.4%</td><td>3/5</td><td>100.0%</td></tr>
+<tr><td>ttl_state</td><td>Worms</td><td>44.0</td><td>0.2</td><td>0.2</td><td>0.02</td><td>+0.18</td><td>100.0%</td><td>1/5</td><td>100.0%</td></tr>
+<tr><td>tcp</td><td>Analysis</td><td>677.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>tcp</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>tcp</td><td>DoS</td><td>4089.0</td><td>3.4</td><td>2.4</td><td>0.35</td><td>+2.05</td><td>70.6%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>tcp</td><td>Exploits</td><td>11132.0</td><td>6.8</td><td>5.8</td><td>0.70</td><td>+5.10</td><td>85.3%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>tcp</td><td>Fuzzers</td><td>6062.0</td><td>221.2</td><td>148.4</td><td>22.13</td><td>+126.27</td><td>67.1%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>tcp</td><td>Generic</td><td>18871.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>tcp</td><td>Normal</td><td>37000.0</td><td>14637.0</td><td>4845.0</td><td>1461.69</td><td>+3383.31</td><td>33.1%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>tcp</td><td>Reconnaissance</td><td>3496.0</td><td>1.0</td><td>1.0</td><td>0.11</td><td>+0.89</td><td>100.0%</td><td>3/5</td><td>33.1%</td></tr>
+<tr><td>tcp</td><td>Shellcode</td><td>378.0</td><td>0.6</td><td>0.6</td><td>0.07</td><td>+0.53</td><td>100.0%</td><td>3/5</td><td>33.1%</td></tr>
+<tr><td>tcp</td><td>Worms</td><td>44.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>connection_counts</td><td>Analysis</td><td>677.0</td><td>8.6</td><td>8.6</td><td>0.85</td><td>+7.75</td><td>100.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Backdoor</td><td>583.0</td><td>1.0</td><td>0.0</td><td>0.08</td><td>-0.08</td><td>0.0%</td><td>0/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>DoS</td><td>4089.0</td><td>74.4</td><td>44.2</td><td>7.44</td><td>+36.76</td><td>59.4%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Exploits</td><td>11132.0</td><td>283.4</td><td>160.4</td><td>28.17</td><td>+132.23</td><td>56.6%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Fuzzers</td><td>6062.0</td><td>948.0</td><td>502.4</td><td>94.85</td><td>+407.55</td><td>53.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Generic</td><td>18871.0</td><td>15.6</td><td>10.8</td><td>1.61</td><td>+9.19</td><td>69.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Normal</td><td>37000.0</td><td>8549.6</td><td>3091.6</td><td>855.90</td><td>+2235.70</td><td>36.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Reconnaissance</td><td>3496.0</td><td>15.8</td><td>11.4</td><td>1.56</td><td>+9.84</td><td>72.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Shellcode</td><td>378.0</td><td>37.0</td><td>22.8</td><td>3.63</td><td>+19.17</td><td>61.6%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>connection_counts</td><td>Worms</td><td>44.0</td><td>0.8</td><td>0.8</td><td>0.08</td><td>+0.72</td><td>100.0%</td><td>4/5</td><td>18.4%</td></tr>
+<tr><td>application</td><td>Analysis</td><td>677.0</td><td>0.6</td><td>0.6</td><td>0.06</td><td>+0.54</td><td>100.0%</td><td>2/5</td><td>58.0%</td></tr>
+<tr><td>application</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>application</td><td>DoS</td><td>4089.0</td><td>5.6</td><td>4.2</td><td>0.57</td><td>+3.63</td><td>75.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>application</td><td>Exploits</td><td>11132.0</td><td>72.2</td><td>48.4</td><td>7.34</td><td>+41.06</td><td>67.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>application</td><td>Fuzzers</td><td>6062.0</td><td>753.0</td><td>482.0</td><td>75.58</td><td>+406.42</td><td>64.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>application</td><td>Generic</td><td>18871.0</td><td>0.6</td><td>0.6</td><td>0.05</td><td>+0.55</td><td>100.0%</td><td>3/5</td><td>33.1%</td></tr>
+<tr><td>application</td><td>Normal</td><td>37000.0</td><td>8729.4</td><td>3331.4</td><td>873.23</td><td>+2458.17</td><td>38.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>application</td><td>Reconnaissance</td><td>3496.0</td><td>2.8</td><td>2.4</td><td>0.28</td><td>+2.12</td><td>85.7%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>application</td><td>Shellcode</td><td>378.0</td><td>3.2</td><td>1.8</td><td>0.31</td><td>+1.49</td><td>56.2%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>application</td><td>Worms</td><td>44.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>packet_loss</td><td>Analysis</td><td>677.0</td><td>0.4</td><td>0.4</td><td>0.03</td><td>+0.37</td><td>100.0%</td><td>2/5</td><td>58.0%</td></tr>
+<tr><td>packet_loss</td><td>Backdoor</td><td>583.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr>
+<tr><td>packet_loss</td><td>DoS</td><td>4089.0</td><td>4.2</td><td>3.0</td><td>0.40</td><td>+2.60</td><td>71.4%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_loss</td><td>Exploits</td><td>11132.0</td><td>35.4</td><td>24.6</td><td>3.62</td><td>+20.98</td><td>69.5%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_loss</td><td>Fuzzers</td><td>6062.0</td><td>501.0</td><td>344.0</td><td>50.32</td><td>+293.68</td><td>68.7%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_loss</td><td>Generic</td><td>18871.0</td><td>0.2</td><td>0.2</td><td>0.02</td><td>+0.18</td><td>100.0%</td><td>1/5</td><td>100.0%</td></tr>
+<tr><td>packet_loss</td><td>Normal</td><td>37000.0</td><td>10502.2</td><td>3858.0</td><td>1050.24</td><td>+2807.77</td><td>36.7%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_loss</td><td>Reconnaissance</td><td>3496.0</td><td>2.2</td><td>2.2</td><td>0.20</td><td>+2.00</td><td>100.0%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_loss</td><td>Shellcode</td><td>378.0</td><td>2.6</td><td>2.2</td><td>0.31</td><td>+1.89</td><td>84.6%</td><td>5/5</td><td>9.5%</td></tr>
+<tr><td>packet_loss</td><td>Worms</td><td>44.0</td><td>0.0</td><td>0.0</td><td>0.00</td><td>+0.00</td><td>n/a</td><td>0/5</td><td>n/a</td></tr></tbody></table></div></section>
 </main></body></html>
