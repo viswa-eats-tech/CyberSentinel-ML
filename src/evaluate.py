@@ -115,7 +115,9 @@ def select_review_rows(
         return reviewed, None
 
     # Stable row order breaks ties reproducibly while keeping the budget exact.
-    review_indices = np.lexsort((np.arange(len(uncertainty)), uncertainty))[:review_count]
+    review_indices = np.lexsort((np.arange(len(uncertainty)), uncertainty))[
+        :review_count
+    ]
     reviewed[review_indices] = True
     return reviewed, float(uncertainty[review_indices[-1]])
 

@@ -157,9 +157,9 @@ class ModelService:
         review_count = int(np.floor(payload.review_budget * len(records)))
         reviewed = np.zeros(len(records), dtype=bool)
         if review_count:
-            review_indices = np.lexsort(
-                (np.arange(len(uncertainty)), uncertainty)
-            )[:review_count]
+            review_indices = np.lexsort((np.arange(len(uncertainty)), uncertainty))[
+                :review_count
+            ]
             reviewed[review_indices] = True
 
         model_name = self.metadata.get("primary_model_display_name", "unknown")
